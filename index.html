@@ -246,6 +246,22 @@
     <img src="sc_7.jpg" alt="Kasva 7" onclick="openPreview(this.src)">
   </div>
 
+  <div id="lightbox" onclick="closePreview()">
+  <img id="lightbox-img" src="">
+</div>
+
+<script>
+function openPreview(src) {
+  document.getElementById('lightbox-img').src = src;
+  document.getElementById('lightbox').classList.add('active');
+}
+
+function closePreview() {
+  document.getElementById('lightbox').classList.remove('active');
+}
+</script>
+
+
   <div class="section-header">
     <h2 class="section-title">Tentang aplikasi ini</h2>
     <span class="section-arrow">→</span>
@@ -268,14 +284,6 @@
 </footer>
 
 
-<script>
-  // Fungsi untuk membuka preview gambar
-  function openPreview(src) {
-    const lightbox = document.getElementById('lightbox');
-    const lightboxImg = document.getElementById('lightbox-img');
-    lightboxImg.src = src;
-    lightbox.classList.add('active');
-  }
-</script>
+
 </body>
 </html>
