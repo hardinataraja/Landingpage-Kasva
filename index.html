@@ -157,6 +157,13 @@
       padding: 0 24px 10px 24px;
       scrollbar-width: none;
     }
+    cursor: pointer;
+transition: transform 0.2s;
+}
+
+.screenshots img:hover {
+  transform: scale(1.03);
+}
     .screenshots::-webkit-scrollbar { display: none; }
     .screenshots img {
       height: 320px;
@@ -190,6 +197,43 @@
       .meta-value { font-size: 18px; }
       .screenshots img { height: 450px; }
     }
+    /* 🔥 FIX LIGHTBOX */
+#lightbox {
+  position: fixed;
+  inset: 0; /* lebih aman dari top/left */
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.9);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 99999;
+
+  opacity: 0;
+  visibility: hidden;
+  transition: 0.25s ease;
+
+  padding: 20px; /* biar ada jarak */
+}
+
+#lightbox.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+#lightbox img {
+  max-width: 100%;
+  max-height: 85vh; /* 🔥 ini kunci biar tidak kepanjangan */
+  width: auto;
+  height: auto;
+
+  border-radius: 12px;
+  object-fit: contain;
+
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
   </style>
 </head>
 <body>
