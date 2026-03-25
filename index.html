@@ -266,6 +266,14 @@
 <footer style="background: #fff; border-top: 1px solid var(--ps-border); padding: 24px; font-size: 12px; color: var(--ps-gray); text-align: center;">
   <p>© 2025 Kasva Developer. Semua hak dilindungi.</p>
 </footer>
-
+<script>
+  // Fungsi untuk membuka preview gambar
+  function openPreview(src) {
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    lightboxImg.src = src;
+    lightbox.classList.add('active');
+  }
+</script>
 </body>
 </html>
