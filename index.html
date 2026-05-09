@@ -1,336 +1,1186 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-BE4FPEBZP6"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-BE4FPEBZP6');
-  </script>
-
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "name": "Kasva",
-    "applicationCategory": "BusinessApplication",
-    "operatingSystem": "Android",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "IDR"
-    }
-  }
-  </script>
-  
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <title>Kasva - Aplikasi POS Gratis untuk UMKM & Toko | Google Play Style</title>
-  <meta name="description" content="Kasva adalah aplikasi POS gratis untuk UMKM, toko, warung, coffee shop, dan usaha jasa. Kelola transaksi, stok, dan laporan penjualan dengan mudah dan cepat. Download sekarang.">
-  <meta name="keywords" content="aplikasi POS gratis, aplikasi kasir UMKM, aplikasi kasir android, aplikasi kasir toko, POS untuk warung, aplikasi kasir coffee shop, aplikasi kasir loundry">
-  <meta name="author" content="Kasva POS">
-  <link rel="icon" href="preview.jpg" type="image/jpeg">
-  <link rel="apple-touch-icon" href="preview.jpg">
-  <link rel="shortcut icon" href="preview.jpg" type="image/jpeg">
+  <title>Kasva POS — Lifetime License | Rp35.000</title>
+  <meta name="description" content="Kasva POS - Aplikasi kasir Android untuk UMKM. Beli sekali, pakai selamanya. Hanya Rp35.000 lifetime.">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --ps-green: #01875f;
-      --ps-dark: #202124;
-      --ps-gray: #5f6368;
-      --ps-light-gray: #e8eaed;
-      --ps-border: #dadce0;
-      --bg-white: #ffffff;
+      --primary: #01875f;
+      --primary-dark: #016d4d;
+      --accent: #f59e0b;
+      --dark: #111827;
+      --gray: #6b7280;
+      --light-gray: #f3f4f6;
+      --border: #e5e7eb;
+      --white: #ffffff;
+      --danger: #ef4444;
+      --success: #22c55e;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { 
-      font-family: 'Roboto', sans-serif; 
-      background-color: var(--bg-white); 
-      color: var(--ps-dark);
-      line-height: 1.4;
-      -webkit-font-smoothing: antialiased;
+      font-family: 'Inter', sans-serif; 
+      background-color: #f8fafc; 
+      color: var(--dark);
+      line-height: 1.6;
     }
 
-    /* Navbar Play Store Style */
+    /* Navbar */
     nav {
       height: 64px;
-      border-bottom: 1px solid var(--ps-border);
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
+      justify-content: space-between;
       padding: 0 24px;
       position: sticky;
       top: 0;
-      background: #fff;
       z-index: 100;
     }
-    .play-logo {
+    .nav-brand {
       display: flex;
       align-items: center;
       gap: 12px;
+      font-weight: 700;
       font-size: 18px;
-      font-weight: 500;
-      color: var(--ps-gray);
+      color: var(--dark);
       text-decoration: none;
     }
+    .nav-brand img {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+    }
+    .nav-cta {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .nav-cta:hover { background: var(--primary-dark); }
 
     .container {
-      max-width: 800px;
+      max-width: 720px;
       margin: 0 auto;
       padding: 24px;
     }
 
-    /* Header Section */
-    .app-header {
-      display: flex;
-      gap: 20px;
-      margin-bottom: 20px;
-      align-items: flex-start;
-    }
-    .app-icon {
-      width: 72px; 
-      height: 72px;
+    /* Hero Section */
+    .hero {
+      background: var(--white);
       border-radius: 16px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
-      object-fit: cover;
-    }
-    .app-info { flex: 1; }
-    .app-info h1 {
-      font-size: 24px;
-      font-weight: 500;
-      margin-bottom: 2px;
-      color: #202124;
-    }
-    .app-developer {
-      color: var(--ps-green);
-      font-weight: 500;
-      font-size: 14px;
-      text-decoration: none;
-      display: block;
-    }
-    .app-status {
-      font-size: 12px;
-      color: var(--ps-gray);
-      margin-top: 4px;
-    }
-
-    /* Meta Stats Area */
-    .app-meta {
-      display: flex;
-      margin: 20px 0;
+      padding: 32px 24px;
       text-align: center;
+      margin-bottom: 24px;
+      border: 1px solid var(--border);
     }
-    .meta-item {
-      flex: 1;
-      border-right: 1px solid var(--ps-light-gray);
+    .hero-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
-    .meta-item:last-child { border-right: none; }
-    .meta-value { font-weight: 700; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 2px; }
-    .meta-label { font-size: 11px; color: var(--ps-gray); margin-top: 2px; }
-
-    /* Button Action */
-    .actions { margin-bottom: 32px; }
-    .install-btn {
-      background-color: var(--ps-green);
+    .hero h1 {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: var(--dark);
+    }
+    .hero-subtitle {
+      color: var(--gray);
+      font-size: 15px;
+      margin-bottom: 20px;
+    }
+    .price-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .price-original {
+      text-decoration: line-through;
+      color: var(--gray);
+      font-size: 18px;
+    }
+    .price-current {
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+    .price-badge {
+      background: var(--accent);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .hero-features {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 24px;
+      text-align: left;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .hero-feature {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--gray);
+    }
+    .hero-feature svg {
+      flex-shrink: 0;
+      color: var(--success);
+    }
+    .btn-primary {
+      background: var(--primary);
       color: white;
       border: none;
-      width: 100%;
-      padding: 10px;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 500;
+      padding: 14px 32px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
       cursor: pointer;
       text-decoration: none;
       display: inline-block;
-      text-align: center;
+      width: 100%;
+      max-width: 400px;
+      transition: all 0.2s;
     }
-    .install-btn:hover { background-color: #016d4d; }
+    .btn-primary:hover { 
+      background: var(--primary-dark); 
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(1,135,95,0.3);
+    }
+    .trust-badges {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+    .trust-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--gray);
+    }
 
-    /* Screenshots Scrollable */
+    /* Screenshots */
+    .screenshots-section {
+      margin-bottom: 24px;
+    }
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      padding: 0 4px;
+    }
     .screenshots {
       display: flex;
       gap: 12px;
       overflow-x: auto;
-      margin: 0 -24px 32px -24px;
-      padding: 0 24px 10px 24px;
+      padding: 4px 4px 12px;
       scrollbar-width: none;
     }
-    cursor: pointer;
-transition: transform 0.2s;
-}
-
-.screenshots img:hover {
-  transform: scale(1.03);
-}
     .screenshots::-webkit-scrollbar { display: none; }
     .screenshots img {
-      height: 320px;
-      border-radius: 8px;
-      border: 1px solid var(--ps-border);
+      height: 280px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
       flex-shrink: 0;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .screenshots img:hover { transform: scale(1.02); }
+
+    /* Features Grid */
+    .features-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    @media(min-width: 480px) {
+      .features-grid { grid-template-columns: 1fr 1fr; }
+    }
+    .feature-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .feature-card h3 {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .feature-card p {
+      font-size: 13px;
+      color: var(--gray);
     }
 
-    .section-header {
+    /* How to Buy */
+    .steps {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .step {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .step:last-child { margin-bottom: 0; }
+    .step-number {
+      width: 32px;
+      height: 32px;
+      background: var(--primary);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .step h4 { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+    .step p { font-size: 13px; color: var(--gray); }
+
+    /* ============== INVOICE / CHECKOUT MODAL ============== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 1000;
+      display: none;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .modal-overlay.active { display: flex; }
+
+    .modal {
+      background: var(--white);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 520px;
+      margin: auto;
+      overflow: hidden;
+      animation: slideUp 0.3s ease;
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
       align-items: center;
+    }
+    .modal-header h2 { font-size: 18px; font-weight: 700; }
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--gray);
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+    }
+    .close-btn:hover { background: var(--light-gray); }
+
+    /* Timer */
+    .timer-section {
+      background: #fef3c7;
+      border-bottom: 1px solid #fde68a;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .timer-label {
+      font-size: 13px;
+      color: #92400e;
+      font-weight: 500;
+    }
+    .timer-countdown {
+      font-family: 'Courier New', monospace;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--danger);
+      background: white;
+      padding: 4px 12px;
+      border-radius: 6px;
+      border: 1px solid #fde68a;
+    }
+
+    /* Invoice Details */
+    .invoice-body { padding: 24px; }
+    .invoice-id {
+      background: var(--light-gray);
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .invoice-id code {
+      font-family: 'Courier New', monospace;
+      font-weight: 700;
+      color: var(--dark);
+      font-size: 14px;
+    }
+    .copy-btn {
+      background: var(--white);
+      border: 1px solid var(--border);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      color: var(--gray);
+    }
+    .copy-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .copy-btn.copied { color: var(--success); border-color: var(--success); }
+
+    .order-summary {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    .order-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 16px;
+      font-size: 14px;
+    }
+    .order-row:not(:last-child) { border-bottom: 1px solid var(--border); }
+    .order-row.total {
+      background: var(--light-gray);
+      font-weight: 700;
+      font-size: 15px;
+    }
+
+    /* Payment Methods */
+    .payment-section { margin-bottom: 24px; }
+    .payment-section h3 {
+      font-size: 14px;
+      font-weight: 700;
       margin-bottom: 12px;
     }
-    .section-title { font-size: 18px; font-weight: 500; color: #202124; }
-    .section-arrow { color: var(--ps-gray); font-size: 20px; }
-    
-    .description {
+    .payment-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .payment-tab {
+      padding: 8px 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--white);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .payment-tab:hover { border-color: var(--primary); }
+    .payment-tab.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .payment-content { display: none; }
+    .payment-content.active { display: block; }
+
+    .bank-list, .wallet-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .bank-item, .wallet-item {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .bank-item:hover, .wallet-item:hover { border-color: var(--primary); }
+    .bank-item.selected, .wallet-item.selected {
+      border-color: var(--primary);
+      background: #f0fdf4;
+    }
+    .bank-info h4, .wallet-info h4 {
       font-size: 14px;
-      color: var(--ps-gray);
-      margin-bottom: 32px;
-      line-height: 1.6;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+    .bank-info p, .wallet-info p {
+      font-size: 12px;
+      color: var(--gray);
+    }
+    .bank-number {
+      font-family: 'Courier New', monospace;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    .bank-copy {
+      font-size: 12px;
+      color: var(--primary);
+      cursor: pointer;
+      margin-top: 4px;
+      display: inline-block;
     }
 
-    /* PC View Adjustments */
-    @media (min-width: 600px) {
-      .app-icon { width: 160px; height: 160px; border-radius: 32px; }
-      .app-info h1 { font-size: 44px; }
-      .app-developer { font-size: 18px; }
-      .install-btn { width: auto; padding: 10px 64px; }
-      .meta-value { font-size: 18px; }
-      .screenshots img { height: 450px; }
+    .qris-box {
+      text-align: center;
+      padding: 20px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
     }
-    /* 🔥 FIX LIGHTBOX */
-#lightbox {
-  position: fixed;
-  inset: 0; /* lebih aman dari top/left */
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0,0,0,0.9);
+    .qris-box img {
+      width: 200px;
+      height: 200px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      background: var(--light-gray);
+    }
+    .qris-box p {
+      font-size: 13px;
+      color: var(--gray);
+    }
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    /* Instructions */
+    .instructions {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+    .instructions h4 {
+      font-size: 13px;
+      font-weight: 700;
+      color: #1e40af;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .instructions ol {
+      padding-left: 18px;
+      font-size: 13px;
+      color: #1e40af;
+      line-height: 1.8;
+    }
 
-  z-index: 99999;
+    /* Action Buttons */
+    .action-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .btn-wa {
+      background: var(--success);
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    .btn-wa:hover { 
+      background: #16a34a; 
+      transform: translateY(-1px);
+    }
+    .btn-secondary {
+      background: var(--white);
+      color: var(--gray);
+      border: 1px solid var(--border);
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 14px;
+      cursor: pointer;
+      text-align: center;
+    }
+    .btn-secondary:hover { background: var(--light-gray); }
 
-  opacity: 0;
-  visibility: hidden;
-  transition: 0.25s ease;
+    /* ============== DOWNLOAD PAGE (AFTER PAID) ============== */
+    .download-page {
+      display: none;
+      text-align: center;
+      padding: 40px 24px;
+    }
+    .download-page.active { display: block; }
+    .download-icon {
+      width: 80px;
+      height: 80px;
+      background: #dcfce7;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 36px;
+    }
+    .download-page h2 {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .download-page p {
+      color: var(--gray);
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+    .download-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 16px 32px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .download-btn:hover { background: var(--primary-dark); }
+    .download-note {
+      font-size: 12px;
+      color: var(--gray);
+      background: var(--light-gray);
+      padding: 12px;
+      border-radius: 8px;
+      text-align: left;
+      max-width: 400px;
+      margin: 0 auto;
+    }
 
-  padding: 20px; /* biar ada jarak */
-}
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 12px;
+      color: var(--gray);
+      border-top: 1px solid var(--border);
+      margin-top: 40px;
+    }
 
-#lightbox.active {
-  opacity: 1;
-  visibility: visible;
-}
+    /* Lightbox */
+    #lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.9);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      padding: 20px;
+    }
+    #lightbox.active { display: flex; }
+    #lightbox img {
+      max-width: 100%;
+      max-height: 85vh;
+      border-radius: 12px;
+    }
 
-#lightbox img {
-  max-width: 100%;
-  max-height: 85vh; /* 🔥 ini kunci biar tidak kepanjangan */
-  width: auto;
-  height: auto;
-
-  border-radius: 12px;
-  object-fit: contain;
-
-  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-}
+    /* Responsive */
+    @media(min-width: 600px) {
+      .hero { padding: 48px 32px; }
+      .hero h1 { font-size: 32px; }
+      .screenshots img { height: 360px; }
+    }
   </style>
 </head>
 <body>
 
 <nav>
-  <a href="#" class="play-logo">
-    <svg width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M7.5 4.2C6.4 5.3 5.8 7.2 5.8 9.5V38.5C5.8 40.8 6.4 42.7 7.5 43.8L7.7 44L27.7 24V23.6L7.7 3.6L7.5 4.2Z" fill="#EA4335"/>
-      <path d="M34.3 30.6L27.7 24V23.6L34.3 17L34.4 17L42.2 21.5C44.5 22.7 44.5 24.8 42.2 26.1L34.4 30.6L34.3 30.6Z" fill="#FBBC04"/>
-      <path d="M34.4 30.5L27.7 23.8L7.5 43.8C8.3 44.6 9.4 44.7 10.7 43.9L34.4 30.5Z" fill="#34A853"/>
-      <path d="M34.4 17L10.7 3.5C9.4 2.8 8.3 2.9 7.5 3.6L27.7 23.7L34.4 17Z" fill="#4285F4"/>
-    </svg>
-    Kasva Store
+  <a href="#" class="nav-brand">
+    <img src="preview.jpg" alt="Kasva">
+    Kasva POS
   </a>
+  <a href="#buy" class="nav-cta">Beli Sekarang</a>
 </nav>
 
 <div class="container">
-  <div class="app-header">
-    <img src="https://kasva.store/preview.jpg" alt="Kasva Icon" class="app-icon">
-    <div class="app-info">
-      <h1>Kasva</h1>
-      <a href="#" class="app-developer">Kasva POS</a>
-      <p class="app-status">Berisi Pembelian dalam aplikasi</p>
-    </div>
-  </div>
 
-  <div class="app-meta">
-    <div class="meta-item">
-      <div class="meta-value">4.9 <span style="font-size:10px">★</span></div>
-      <div class="meta-label">1rb ulasan</div>
+  <!-- Hero Section -->
+  <section class="hero" id="buy">
+    <img src="preview.jpg" alt="Kasva POS" class="hero-icon">
+    <h1>Kasva POS — Lifetime License</h1>
+    <p class="hero-subtitle">Aplikasi kasir Android untuk UMKM, toko, warung & coffee shop</p>
+
+    <div class="price-tag">
+      <span class="price-original">Rp99.000</span>
+      <span class="price-current">Rp35.000</span>
+      <span class="price-badge">SEKALI BAYAR</span>
     </div>
-    <div class="meta-item">
-      <div class="meta-value">1rb+</div>
-      <div class="meta-label">Download</div>
-    </div>
-    <div class="meta-item">
-      <div class="meta-value">
-        <span style="border: 1px solid #5f6368; font-size: 10px; padding: 0 2px; border-radius: 2px;">4+</span>
+
+    <div class="hero-features">
+      <div class="hero-feature">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+        Akses penuh selamanya — tanpa biaya bulanan
       </div>
-      <div class="meta-label">Rating 4+</div>
+      <div class="hero-feature">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+        Update gratis seumur hidup
+      </div>
+      <div class="hero-feature">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+        File APK langsung download — instalasi mudah
+      </div>
+      <div class="hero-feature">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+        Support via WhatsApp admin
+      </div>
     </div>
-  </div>
 
-  <div class="actions">
-    <a href="https://github.com/hardinataraja/Kasva/releases/download/v1.0.12.1/kasva.apk" class="install-btn">Install</a>
-  </div>
+    <button class="btn-primary" onclick="openCheckout()">🛒 Beli Sekarang — Rp35.000</button>
 
-  <div class="screenshots">
-    <img src="sc_1.jpg" alt="Kasva 1" onclick="openPreview(this.src)">
-    <img src="sc_2.jpg" alt="Kasva 2" onclick="openPreview(this.src)">
-    <img src="sc_3.jpg" alt="Kasva 3" onclick="openPreview(this.src)">
-    <img src="sc_4.jpg" alt="Kasva 4" onclick="openPreview(this.src)">
-    <img src="sc_5.jpg" alt="Kasva 5" onclick="openPreview(this.src)">
-    <img src="sc_7.jpg" alt="Kasva 7" onclick="openPreview(this.src)">
-  </div>
+    <div class="trust-badges">
+      <span class="trust-badge">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+        Pembayaran Aman
+      </span>
+      <span class="trust-badge">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        Garansi 7 Hari
+      </span>
+      <span class="trust-badge">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+        Instant Download
+      </span>
+    </div>
+  </section>
 
-  <div id="lightbox" onclick="closePreview()">
+  <!-- Screenshots -->
+  <section class="screenshots-section">
+    <h2 class="section-title">Screenshot Aplikasi</h2>
+    <div class="screenshots">
+      <img src="sc_1.jpg" alt="Kasva 1" onclick="openLightbox(this.src)">
+      <img src="sc_2.jpg" alt="Kasva 2" onclick="openLightbox(this.src)">
+      <img src="sc_3.jpg" alt="Kasva 3" onclick="openLightbox(this.src)">
+      <img src="sc_4.jpg" alt="Kasva 4" onclick="openLightbox(this.src)">
+      <img src="sc_5.jpg" alt="Kasva 5" onclick="openLightbox(this.src)">
+      <img src="sc_7.jpg" alt="Kasva 7" onclick="openLightbox(this.src)">
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section>
+    <h2 class="section-title">Fitur Unggulan</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <h3>📊 Manajemen Stok</h3>
+        <p>Kelola inventori barang, kategori, dan stok masuk/keluar dengan mudah.</p>
+      </div>
+      <div class="feature-card">
+        <h3>💰 Transaksi Cepat</h3>
+        <p>Proses penjualan dengan interface kasir yang simpel dan responsif.</p>
+      </div>
+      <div class="feature-card">
+        <h3>📈 Laporan Penjualan</h3>
+        <p>Lihat ringkasan penjualan harian, mingguan, dan bulanan.</p>
+      </div>
+      <div class="feature-card">
+        <h3>🖨️ Print Struk</h3>
+        <p>Dukungan printer Bluetooth thermal untuk cetak struk langsung.</p>
+      </div>
+      <div class="feature-card">
+        <h3>🔄 Multi User</h3>
+        <p>Tambahkan kasir dan admin dengan hak akses berbeda.</p>
+      </div>
+      <div class="feature-card">
+        <h3>📱 Offline Mode</h3>
+        <p>Berjalan tanpa internet, data tersimpan lokal di perangkat.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- How to Buy -->
+  <section class="steps">
+    <h2 class="section-title" style="margin-bottom: 20px;">Cara Pembelian</h2>
+    <div class="step">
+      <div class="step-number">1</div>
+      <div>
+        <h4>Klik Beli & Pilih Metode Pembayaran</h4>
+        <p>Pilih transfer bank, e-wallet (DANA/OVO/ShopeePay), atau QRIS.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-number">2</div>
+      <div>
+        <h4>Bayar Sesuai Nominal & Konfirmasi</h4>
+        <p>Lakukan pembayaran dan kirim bukti via WhatsApp ke admin.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-number">3</div>
+      <div>
+        <h4>Verifikasi & Download APK</h4>
+        <p>Admin verifikasi manual, halaman invoice berubah jadi link download.</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <p>© 2025 Kasva Developer. Semua hak dilindungi.</p>
+  <p style="margin-top: 4px;">Kontak: 0821-1188-7939</p>
+</footer>
+
+<!-- ========== CHECKOUT MODAL ========== -->
+<div class="modal-overlay" id="checkoutModal">
+  <div class="modal">
+
+    <!-- INVOICE VIEW -->
+    <div id="invoiceView">
+      <div class="modal-header">
+        <h2>🧾 Invoice Pembayaran</h2>
+        <button class="close-btn" onclick="closeCheckout()">×</button>
+      </div>
+
+      <div class="timer-section">
+        <span class="timer-label">⏱️ Selesaikan pembayaran dalam</span>
+        <span class="timer-countdown" id="countdown">30:00</span>
+      </div>
+
+      <div class="invoice-body">
+        <div class="invoice-id">
+          <span>No. Invoice: <code id="invoiceNumber">KSV-XXXXXX</code></span>
+          <button class="copy-btn" onclick="copyInvoice()">Salin</button>
+        </div>
+
+        <div class="order-summary">
+          <div class="order-row">
+            <span>Kasva POS — Lifetime License</span>
+            <span>Rp35.000</span>
+          </div>
+          <div class="order-row">
+            <span>Diskon</span>
+            <span style="color: var(--success);">-Rp64.000</span>
+          </div>
+          <div class="order-row total">
+            <span>Total Pembayaran</span>
+            <span style="color: var(--primary); font-size: 18px;">Rp35.000</span>
+          </div>
+        </div>
+
+        <div class="payment-section">
+          <h3>Pilih Metode Pembayaran</h3>
+          <div class="payment-tabs">
+            <button class="payment-tab active" onclick="switchTab('transfer')">🏦 Transfer Bank</button>
+            <button class="payment-tab" onclick="switchTab('ewallet')">💳 E-Wallet</button>
+            <button class="payment-tab" onclick="switchTab('qris')">📱 QRIS</button>
+          </div>
+
+          <!-- Transfer Bank -->
+          <div class="payment-content active" id="tab-transfer">
+            <div class="bank-list">
+              <div class="bank-item" onclick="selectBank(this, 'BCA', '1234567890', 'Hardinata Raja')">
+                <div class="bank-info">
+                  <h4>Bank BCA</h4>
+                  <p>a.n. Hardinata Raja</p>
+                </div>
+                <div style="text-align: right;">
+                  <div class="bank-number">1234567890</div>
+                  <span class="bank-copy" onclick="event.stopPropagation(); copyText('1234567890')">📋 Salin</span>
+                </div>
+              </div>
+              <div class="bank-item" onclick="selectBank(this, 'Mandiri', '9876543210', 'Hardinata Raja')">
+                <div class="bank-info">
+                  <h4>Bank Mandiri</h4>
+                  <p>a.n. Hardinata Raja</p>
+                </div>
+                <div style="text-align: right;">
+                  <div class="bank-number">9876543210</div>
+                  <span class="bank-copy" onclick="event.stopPropagation(); copyText('9876543210')">📋 Salin</span>
+                </div>
+              </div>
+              <div class="bank-item" onclick="selectBank(this, 'BRI', '1122334455', 'Hardinata Raja')">
+                <div class="bank-info">
+                  <h4>Bank BRI</h4>
+                  <p>a.n. Hardinata Raja</p>
+                </div>
+                <div style="text-align: right;">
+                  <div class="bank-number">1122334455</div>
+                  <span class="bank-copy" onclick="event.stopPropagation(); copyText('1122334455')">📋 Salin</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- E-Wallet -->
+          <div class="payment-content" id="tab-ewallet">
+            <div class="wallet-list">
+              <div class="wallet-item" onclick="selectWallet(this, 'DANA', '082111887939', 'Hardinata Raja')">
+                <div class="wallet-info">
+                  <h4>DANA</h4>
+                  <p>a.n. Hardinata Raja</p>
+                </div>
+                <div style="text-align: right;">
+                  <div class="bank-number">082111887939</div>
+                  <span class="bank-copy" onclick="event.stopPropagation(); copyText('082111887939')">📋 Salin</span>
+                </div>
+              </div>
+              <div class="wallet-item" onclick="selectWallet(this, 'OVO', '082111887939', 'Hardinata Raja')">
+                <div class="wallet-info">
+                  <h4>OVO</h4>
+                  <p>a.n. Hardinata Raja</p>
+                </div>
+                <div style="text-align: right;">
+                  <div class="bank-number">082111887939</div>
+                  <span class="bank-copy" onclick="event.stopPropagation(); copyText('082111887939')">📋 Salin</span>
+                </div>
+              </div>
+              <div class="wallet-item" onclick="selectWallet(this, 'ShopeePay', '082111887939', 'Hardinata Raja')">
+                <div class="wallet-info">
+                  <h4>ShopeePay</h4>
+                  <p>a.n. Hardinata Raja</p>
+                </div>
+                <div style="text-align: right;">
+                  <div class="bank-number">082111887939</div>
+                  <span class="bank-copy" onclick="event.stopPropagation(); copyText('082111887939')">📋 Salin</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- QRIS -->
+          <div class="payment-content" id="tab-qris">
+            <div class="qris-box">
+              <img src="qris.png" alt="QRIS Code" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+              <div style="display:none; padding: 40px; background: var(--light-gray); border-radius: 8px; margin-bottom: 12px;">
+                <p style="font-size: 48px; margin-bottom: 8px;">📷</p>
+                <p>QRIS Code</p>
+              </div>
+              <p>Scan kode QRIS di atas menggunakan aplikasi e-wallet atau mobile banking Anda.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="instructions">
+          <h4>📋 Petunjuk Pembayaran</h4>
+          <ol>
+            <li>Pilih salah satu metode pembayaran di atas.</li>
+            <li>Transfer tepat <strong>Rp35.000</strong> (jangan dibulatkan).</li>
+            <li>Simpan bukti transfer/screenshot pembayaran.</li>
+            <li>Klik tombol "Saya Sudah Bayar" di bawah untuk konfirmasi via WhatsApp.</li>
+          </ol>
+        </div>
+
+        <div class="action-buttons">
+          <a class="btn-wa" id="waButton" href="#" onclick="return confirmPayment()">
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            Saya Sudah Bayar — Konfirmasi via WhatsApp
+          </a>
+          <button class="btn-secondary" onclick="closeCheckout()">Nanti Saja</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- DOWNLOAD VIEW (After Paid) -->
+    <div class="download-page" id="downloadView">
+      <div class="download-icon">✅</div>
+      <h2>Pembayaran Terverifikasi!</h2>
+      <p>Terima kasih telah membeli Kasva POS. Silakan download file APK di bawah ini.</p>
+
+      <a href="https://github.com/hardinataraja/Kasva/releases/download/v1.0.12.1/kasva.apk" class="download-btn" download>
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+        Download Kasva APK
+      </a>
+
+      <div class="download-note">
+        <strong>Cara Instalasi:</strong><br>
+        1. Download file APK di atas<br>
+        2. Buka file APK di folder Download<br>
+        3. Izinkan "Install dari sumber tidak dikenal" jika diminta<br>
+        4. Selesai — Kasva POS siap digunakan!
+      </div>
+
+      <div style="margin-top: 20px;">
+        <a href="https://wa.me/6282111887939" target="_blank" style="color: var(--gray); font-size: 13px; text-decoration: none;">
+          Butuh bantuan? Hubungi Admin via WhatsApp →
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Lightbox -->
+<div id="lightbox" onclick="closeLightbox()">
   <img id="lightbox-img" src="">
 </div>
 
 <script>
-function openPreview(src) {
+// ========== DATA DUMMY (BISA DI EDIT HARDCODE) ==========
+const PAYMENT_DATA = {
+  bank: [
+    { name: 'BCA', number: '1234567890', holder: 'Hardinata Raja' },
+    { name: 'Mandiri', number: '9876543210', holder: 'Hardinata Raja' },
+    { name: 'BRI', number: '1122334455', holder: 'Hardinata Raja' }
+  ],
+  ewallet: [
+    { name: 'DANA', number: '082111887939', holder: 'Hardinata Raja' },
+    { name: 'OVO', number: '082111887939', holder: 'Hardinata Raja' },
+    { name: 'ShopeePay', number: '082111887939', holder: 'Hardinata Raja' }
+  ],
+  qris: 'qris.png',
+  adminWa: '6282111887939',
+  productName: 'Kasva POS — Lifetime License',
+  price: 35000,
+  githubRelease: 'https://github.com/hardinataraja/Kasva/releases/download/v1.0.12.1/kasva.apk'
+};
+
+// ========== INVOICE GENERATOR ==========
+let invoiceData = {
+  id: '',
+  method: '',
+  detail: '',
+  expiredAt: null,
+  paid: false
+};
+
+let timerInterval;
+
+function generateInvoiceId() {
+  const date = new Date();
+  const random = Math.random().toString(36).substring(2, 6).toUpperCase();
+  return `KSV-${date.getFullYear()}${String(date.getMonth()+1).padStart(2,'0')}${String(date.getDate()).padStart(2,'0')}-${random}`;
+}
+
+function openCheckout() {
+  // Generate new invoice
+  invoiceData.id = generateInvoiceId();
+  invoiceData.expiredAt = Date.now() + (30 * 60 * 1000); // 30 minutes
+  invoiceData.paid = false;
+
+  document.getElementById('invoiceNumber').textContent = invoiceData.id;
+  document.getElementById('checkoutModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+
+  // Reset views
+  document.getElementById('invoiceView').style.display = 'block';
+  document.getElementById('downloadView').classList.remove('active');
+
+  startTimer();
+}
+
+function closeCheckout() {
+  document.getElementById('checkoutModal').classList.remove('active');
+  document.body.style.overflow = '';
+  clearInterval(timerInterval);
+}
+
+function startTimer() {
+  clearInterval(timerInterval);
+  const countdownEl = document.getElementById('countdown');
+
+  timerInterval = setInterval(() => {
+    const now = Date.now();
+    const diff = invoiceData.expiredAt - now;
+
+    if (diff <= 0) {
+      clearInterval(timerInterval);
+      countdownEl.textContent = '00:00';
+      countdownEl.style.color = 'var(--danger)';
+      // Auto close or show expired message
+      return;
+    }
+
+    const minutes = Math.floor(diff / 60000);
+    const seconds = Math.floor((diff % 60000) / 1000);
+    countdownEl.textContent = `${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
+
+    if (minutes < 5) {
+      countdownEl.style.color = 'var(--danger)';
+    }
+  }, 1000);
+}
+
+// ========== TAB SWITCHING ==========
+function switchTab(tab) {
+  document.querySelectorAll('.payment-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.payment-content').forEach(c => c.classList.remove('active'));
+
+  event.target.classList.add('active');
+  document.getElementById(`tab-${tab}`).classList.add('active');
+}
+
+// ========== PAYMENT SELECTION ==========
+function selectBank(el, bank, number, holder) {
+  document.querySelectorAll('.bank-item').forEach(i => i.classList.remove('selected'));
+  el.classList.add('selected');
+  invoiceData.method = 'Transfer Bank';
+  invoiceData.detail = `${bank} - ${number} a.n ${holder}`;
+}
+
+function selectWallet(el, wallet, number, holder) {
+  document.querySelectorAll('.wallet-item').forEach(i => i.classList.remove('selected'));
+  el.classList.add('selected');
+  invoiceData.method = 'E-Wallet';
+  invoiceData.detail = `${wallet} - ${number} a.n ${holder}`;
+}
+
+// ========== COPY FUNCTIONS ==========
+function copyText(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = event.target;
+    const original = btn.textContent;
+    btn.textContent = '✅ Tersalin';
+    setTimeout(() => btn.textContent = original, 1500);
+  });
+}
+
+function copyInvoice() {
+  const id = document.getElementById('invoiceNumber').textContent;
+  navigator.clipboard.writeText(id).then(() => {
+    const btn = event.target;
+    btn.textContent = '✅ Tersalin';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Salin';
+      btn.classList.remove('copied');
+    }, 1500);
+  });
+}
+
+// ========== WHATSAPP CONFIRMATION ==========
+function confirmPayment() {
+  if (!invoiceData.method) {
+    alert('Silakan pilih metode pembayaran terlebih dahulu!');
+    return false;
+  }
+
+  const message = encodeURIComponent(
+    `Halo Admin Kasva,
+
+` +
+    `Saya sudah melakukan pembayaran untuk pembelian Kasva POS.
+
+` +
+    `📋 No. Invoice: ${invoiceData.id}
+` +
+    `💳 Metode: ${invoiceData.method}
+` +
+    `👤 Detail: ${invoiceData.detail}
+` +
+    `💰 Nominal: Rp35.000
+
+` +
+    `Mohon verifikasi pembayaran saya. Terima kasih!`
+  );
+
+  const waUrl = `https://wa.me/${PAYMENT_DATA.adminWa}?text=${message}`;
+  window.open(waUrl, '_blank');
+  return false;
+}
+
+// ========== ADMIN PANEL SIMULATION ==========
+// Fungsi ini untuk simulasi admin set paid
+// Di production, ini dipanggil dari backend/admin panel
+function adminSetPaid(invoiceId) {
+  if (invoiceId === invoiceData.id) {
+    invoiceData.paid = true;
+    showDownloadPage();
+    // Simpan ke localStorage agar persist
+    localStorage.setItem('kasva_paid', JSON.stringify({
+      invoiceId: invoiceData.id,
+      paidAt: new Date().toISOString()
+    }));
+  }
+}
+
+function showDownloadPage() {
+  document.getElementById('invoiceView').style.display = 'none';
+  document.getElementById('downloadView').classList.add('active');
+}
+
+// ========== CHECK PAID STATUS ON LOAD ==========
+window.addEventListener('load', () => {
+  const paidData = localStorage.getItem('kasva_paid');
+  if (paidData) {
+    const data = JSON.parse(paidData);
+    // Jika sudah pernah bayar, tampilkan download (simulasi)
+    // Di production, cek ke backend dulu
+    invoiceData.id = data.invoiceId;
+    invoiceData.paid = true;
+  }
+});
+
+// ========== LIGHTBOX ==========
+function openLightbox(src) {
   document.getElementById('lightbox-img').src = src;
   document.getElementById('lightbox').classList.add('active');
 }
-
-function closePreview() {
+function closeLightbox() {
   document.getElementById('lightbox').classList.remove('active');
 }
+
+// Close modal on escape key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closeCheckout();
+    closeLightbox();
+  }
+});
+
+// ========== CONSOLE INFO FOR ADMIN ==========
+console.log('%c Kasva POS Admin Panel ', 'background: #01875f; color: white; font-size: 14px; font-weight: bold; padding: 4px 8px; border-radius: 4px;');
+console.log('%cUntuk simulasi verifikasi pembayaran, jalankan di console: adminSetPaid("' + (invoiceData.id || 'KSV-XXXXXX') + '")', 'color: #6b7280;');
 </script>
-
-
-  <div class="section-header">
-    <h2 class="section-title">Tentang aplikasi ini</h2>
-    <span class="section-arrow">→</span>
-  </div>
-  <div class="description">
-    Kasva adalah aplikasi POS (Point of Sale) gratis yang dirancang khusus untuk membantu UMKM, toko, warung, coffee shop, dan usaha jasa di Indonesia. 
-
-    Kelola transaksi, stok barang, dan laporan penjualan harian Anda hanya dalam satu genggaman. Cepat, mudah, dan 100% gratis.
-  </div>
-
-  <div class="section-header">
-    <h2 class="section-title">Rating & ulasan</h2>
-    <span class="section-arrow">→</span>
-  </div>
-  <div style="font-size: 12px; color: var(--ps-gray); margin-bottom: 24px;">Rating dan ulasan telah diverifikasi <span style="font-weight: bold;">ⓘ</span></div>
-</div>
-
-<footer style="background: #fff; border-top: 1px solid var(--ps-border); padding: 24px; font-size: 12px; color: var(--ps-gray); text-align: center;">
-  <p>© 2025 Kasva Developer. Semua hak dilindungi.</p>
-</footer>
-
-
 
 </body>
 </html>
