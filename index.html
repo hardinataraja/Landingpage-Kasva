@@ -12,7 +12,7 @@
   <!-- Midtrans Snap -->
   <script type="text/javascript" 
     src="https://app.sandbox.midtrans.com/snap/snap.js" 
-    data-client-key="YOUR_CLIENT_KEY"></script>
+    data-client-key="Mid-client-qvuVoDSE3CfwOEgk"></script>
 
   <style>
     :root {
@@ -546,8 +546,8 @@
         <p>Tambahkan kasir dan admin dengan hak akses berbeda.</p>
       </div>
       <div class="feature-card">
-        <h3>📱 Support Scan Barcode</h3>
-        <p>Percepat Pencarian Produk dengan fitur scan barcode.</p>
+        <h3>📱 Support Scan Barcode </h3>
+        <p>Pencarian Produk Cepat dengan Fitur Scan Barcode.</p>
       </div>
     </div>
   </section>
@@ -598,15 +598,19 @@
 
 <script>
 // ========== CONFIGURATION ==========
+// Ganti dengan domain Vercel Anda setelah deploy
 const CONFIG = {
-  // Ganti dengan backend URL Anda
-  API_URL: 'https://your-backend.com/create-transaction',
-  // Fallback: jika tidak ada backend, gunakan Snap Token manual (untuk testing)
-  SNAP_TOKEN: null,
-  // Midtrans Client Key (untuk Snap.js)
-  CLIENT_KEY: 'YOUR_CLIENT_KEY',
+  // Auto-detect: jika di localhost, pakai relative path. Jika production, pakai absolute URL
+  API_URL: window.location.hostname === 'localhost' 
+    ? 'http://localhost:3000/api/pay' 
+    : 'https://' + window.location.hostname + '/api/pay',
+  
+  // Ganti dengan Client Key dari dashboard Midtrans (Sandbox untuk testing)
+  CLIENT_KEY: 'Mid-client-qvuVoDSE3CfwOEgk',
+  
   // URL Download APK
   DOWNLOAD_URL: 'https://github.com/hardinataraja/Kasva/releases/download/v1.0.12.1/kasva.apk',
+  
   // WhatsApp Admin
   ADMIN_WA: '6282111887939'
 };
@@ -670,49 +674,48 @@ async function startPayment() {
     // Generate Order ID
     currentOrderId = `KSV-${Date.now()}`;
     
-    // Opsi 1: Request ke backend untuk Snap Token
-    let snapToken;
+    // Request ke backend Vercel untuk Snap Token
+    const response = await fetch(CONFIG.API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        order_id: currentOrderId,
+        gross_amount: 35000,
+        item_name: 'Kasva POS - Lifetime License',
+        customer_name: 'Customer',
+        customer_email: 'customer@email.com'
+      })
+    });
     
-    try {
-      const response = await fetch(CONFIG.API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          order_id: currentOrderId,
-          gross_amount: 35000,
-          item_name: 'Kasva POS - Lifetime License',
-          customer_name: 'Customer',
-          customer_email: 'customer@email.com'
-        })
-      });
-      
-      if (!response.ok) throw new Error('Backend error');
-      const data = await response.json();
-      snapToken = data.token;
-    } catch (e) {
-      // Opsi 2: Jika tidak ada backend, gunakan token manual (hanya untuk testing!)
-      console.warn('Backend tidak tersedia, menggunakan mode testing');
-      alert('Mode Testing: Masukkan Snap Token manual di console atau setup backend terlebih dahulu.');
-      loading.classList.remove('active');
-      btn.disabled = false;
-      return;
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `HTTP ${response.status}: Gagal membuat transaksi`);
+    }
+    
+    const data = await response.json();
+    
+    if (!data.token) {
+      throw new Error('Token tidak ditemukan dalam response');
     }
 
     // Buka Midtrans Snap
     loading.classList.remove('active');
     
-    window.snap.pay(snapToken, {
+    window.snap.pay(data.token, {
       onSuccess: function(result) {
         console.log('Success', result);
         showPaymentStatus('success', `Pembayaran berhasil! Order ID: ${result.order_id}`);
+        btn.disabled = false;
       },
       onPending: function(result) {
         console.log('Pending', result);
         showPaymentStatus('pending', `Pembayaran pending. Order ID: ${result.order_id}. Silakan cek status pembayaran Anda.`);
+        btn.disabled = false;
       },
       onError: function(result) {
         console.log('Error', result);
         showPaymentStatus('error', 'Pembayaran gagal. Silakan coba lagi.');
+        btn.disabled = false;
       },
       onClose: function() {
         console.log('Customer closed popup');
@@ -726,7 +729,7 @@ async function startPayment() {
     console.error('Payment error:', error);
     loading.classList.remove('active');
     btn.disabled = false;
-    showPaymentStatus('error', 'Gagal memuat halaman pembayaran. Silakan coba lagi.');
+    showPaymentStatus('error', 'Gagal memuat halaman pembayaran: ' + error.message);
   }
 }
 
@@ -781,8 +784,8 @@ document.addEventListener('keydown', (e) => {
 });
 
 // ========== CONSOLE INFO ==========
-console.log('%c Kasva POS + Midtrans ', 'background: #01875f; color: white; font-size: 14px; font-weight: bold; padding: 4px 8px; border-radius: 4px;');
-console.log('%cPastikan untuk mengganti CLIENT_KEY dan setup backend untuk generate Snap Token.', 'color: #6b7280;');
+console.log('%c Kasva POS + Midtrans + Vercel ', 'background: #01875f; color: white; font-size: 14px; font-weight: bold; padding: 4px 8px; border-radius: 4px;');
+console.log('%cAPI URL: ' + CONFIG.API_URL, 'color: #6b7280;');
 </script>
 
 </body>
