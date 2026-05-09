@@ -2,19 +2,12 @@
 import midtransClient from 'midtrans-client';
 
 export default async function handler(req, res) {
-  // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   
-  // Handle preflight
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-  
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+  if (req.method === 'OPTIONS') return res.status(200).end();
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   try {
     const snap = new midtransClient.Snap({
@@ -24,6 +17,9 @@ export default async function handler(req, res) {
     });
 
     const { order_id, gross_amount, item_name, customer_name, customer_email } = req.body;
+
+    // Get origin untuk callback URL
+    const origin = req.headers.origin || 'https://' + req.headers.host;
 
     const parameter = {
       transaction_details: {
@@ -39,6 +35,12 @@ export default async function handler(req, res) {
       customer_details: {
         first_name: customer_name || 'Customer',
         email: customer_email || 'customer@email.com'
+      },
+      // TAMBAH INI: Callback URLs
+      callbacks: {
+        finish: `${origin}/?status=success&order_id=${order_id}`,
+        unfinish: `${origin}/?status=pending&order_id=${order_id}`,
+        error: `${origin}/?status=error&order_id=${order_id}`
       }
     };
 
