@@ -1,50 +1,58 @@
-// api/pay.js - Vercel Serverless Function
-const midtransClient = require('midtrans-client');
+// api/pay.js - ESM format
+import midtransClient from 'midtrans-client';
 
 export default async function handler(req, res) {
-  // CORS
+  // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  
+  // Handle preflight
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
   
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const snap = new midtransClient.Snap({
-    isProduction: false, // true untuk live
-    serverKey: process.env.MIDTRANS_SERVER_KEY,
-    clientKey: process.env.MIDTRANS_CLIENT_KEY
-  });
-
-  const { order_id, gross_amount, item_name, customer_name, customer_email } = req.body;
-
-  const parameter = {
-    transaction_details: {
-      order_id: order_id || `KSV-${Date.now()}`,
-      gross_amount: gross_amount || 35000
-    },
-    item_details: [{
-      id: 'kasva-pos',
-      price: gross_amount || 35000,
-      quantity: 1,
-      name: item_name || 'Kasva POS - Lifetime License'
-    }],
-    customer_details: {
-      first_name: customer_name || 'Customer',
-      email: customer_email || 'customer@email.com'
-    },
-    // Redirect setelah pembayaran
-    callbacks: {
-      finish: 'https://kasva.com/?status=success',
-      unfinish: 'https://kasva.com/?status=pending',
-      error: 'https://kasva.com/?status=error'
-    }
-  };
-
   try {
+    const snap = new midtransClient.Snap({
+      isProduction: false,
+      serverKey: process.env.MIDTRANS_SERVER_KEY,
+      clientKey: process.env.MIDTRANS_CLIENT_KEY
+    });
+
+    const { order_id, gross_amount, item_name, customer_name, customer_email } = req.body;
+
+    const parameter = {
+      transaction_details: {
+        order_id: order_id || `KSV-${Date.now()}`,
+        gross_amount: gross_amount || 35000
+      },
+      item_details: [{
+        id: 'kasva-pos',
+        price: gross_amount || 35000,
+        quantity: 1,
+        name: item_name || 'Kasva POS - Lifetime License'
+      }],
+      customer_details: {
+        first_name: customer_name || 'Customer',
+        email: customer_email || 'customer@email.com'
+      }
+    };
+
     const transaction = await snap.createTransaction(parameter);
-    res.status(200).json({ token: transaction.token, redirect_url: transaction.redirect_url });
+    
+    return res.status(200).json({ 
+      token: transaction.token,
+      redirect_url: transaction.redirect_url 
+    });
+    
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Midtrans error:', error);
+    return res.status(500).json({ 
+      error: error.message || 'Internal server error' 
+    });
   }
 }
