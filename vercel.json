@@ -1,6 +1,22 @@
 {
   "version": 2,
   "routes": [
-    { "src": "/api/(.*)", "dest": "/api/$1.js" }
+    {
+      "src": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "landingpage-kasva.vercel.app"
+        }
+      ],
+      "status": 301,
+      "headers": {
+        "Location": "https://kasva.store/$1"
+      }
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    }
   ]
 }
