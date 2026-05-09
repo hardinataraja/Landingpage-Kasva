@@ -9,6 +9,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
+  <!-- Midtrans Snap -->
+  <script type="text/javascript" 
+    src="https://app.sandbox.midtrans.com/snap/snap.js" 
+    data-client-key="YOUR_CLIENT_KEY"></script>
+
   <style>
     :root {
       --primary: #01875f;
@@ -171,6 +176,11 @@
       transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba(1,135,95,0.3);
     }
+    .btn-primary:disabled {
+      background: var(--gray);
+      cursor: not-allowed;
+      transform: none;
+    }
     .trust-badges {
       display: flex;
       justify-content: center;
@@ -270,298 +280,20 @@
     .step h4 { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
     .step p { font-size: 13px; color: var(--gray); }
 
-    /* ============== INVOICE / CHECKOUT MODAL ============== */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.6);
-      z-index: 1000;
-      display: none;
-      align-items: flex-start;
-      justify-content: center;
-      padding: 20px;
-      overflow-y: auto;
-    }
-    .modal-overlay.active { display: flex; }
-
-    .modal {
+    /* Payment Status Section */
+    .payment-status {
       background: var(--white);
+      border: 1px solid var(--border);
       border-radius: 16px;
-      width: 100%;
-      max-width: 520px;
-      margin: auto;
-      overflow: hidden;
-      animation: slideUp 0.3s ease;
-    }
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .modal-header {
-      padding: 20px 24px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .modal-header h2 { font-size: 18px; font-weight: 700; }
-    .close-btn {
-      background: none;
-      border: none;
-      font-size: 24px;
-      cursor: pointer;
-      color: var(--gray);
-      width: 32px;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 8px;
-    }
-    .close-btn:hover { background: var(--light-gray); }
-
-    /* Timer */
-    .timer-section {
-      background: #fef3c7;
-      border-bottom: 1px solid #fde68a;
-      padding: 16px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .timer-label {
-      font-size: 13px;
-      color: #92400e;
-      font-weight: 500;
-    }
-    .timer-countdown {
-      font-family: 'Courier New', monospace;
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--danger);
-      background: white;
-      padding: 4px 12px;
-      border-radius: 6px;
-      border: 1px solid #fde68a;
-    }
-
-    /* Invoice Details */
-    .invoice-body { padding: 24px; }
-    .invoice-id {
-      background: var(--light-gray);
-      padding: 12px 16px;
-      border-radius: 8px;
-      font-size: 13px;
-      margin-bottom: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .invoice-id code {
-      font-family: 'Courier New', monospace;
-      font-weight: 700;
-      color: var(--dark);
-      font-size: 14px;
-    }
-    .copy-btn {
-      background: var(--white);
-      border: 1px solid var(--border);
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 12px;
-      cursor: pointer;
-      color: var(--gray);
-    }
-    .copy-btn:hover { border-color: var(--primary); color: var(--primary); }
-    .copy-btn.copied { color: var(--success); border-color: var(--success); }
-
-    .order-summary {
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      overflow: hidden;
-      margin-bottom: 24px;
-    }
-    .order-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 12px 16px;
-      font-size: 14px;
-    }
-    .order-row:not(:last-child) { border-bottom: 1px solid var(--border); }
-    .order-row.total {
-      background: var(--light-gray);
-      font-weight: 700;
-      font-size: 15px;
-    }
-
-    /* Payment Methods */
-    .payment-section { margin-bottom: 24px; }
-    .payment-section h3 {
-      font-size: 14px;
-      font-weight: 700;
-      margin-bottom: 12px;
-    }
-    .payment-tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 16px;
-      flex-wrap: wrap;
-    }
-    .payment-tab {
-      padding: 8px 16px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background: var(--white);
-      cursor: pointer;
-      font-size: 13px;
-      font-weight: 500;
-      transition: all 0.2s;
-    }
-    .payment-tab:hover { border-color: var(--primary); }
-    .payment-tab.active {
-      background: var(--primary);
-      color: white;
-      border-color: var(--primary);
-    }
-
-    .payment-content { display: none; }
-    .payment-content.active { display: block; }
-
-    .bank-list, .wallet-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .bank-item, .wallet-item {
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 14px 16px;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .bank-item:hover, .wallet-item:hover { border-color: var(--primary); }
-    .bank-item.selected, .wallet-item.selected {
-      border-color: var(--primary);
-      background: #f0fdf4;
-    }
-    .bank-info h4, .wallet-info h4 {
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 2px;
-    }
-    .bank-info p, .wallet-info p {
-      font-size: 12px;
-      color: var(--gray);
-    }
-    .bank-number {
-      font-family: 'Courier New', monospace;
-      font-size: 15px;
-      font-weight: 700;
-      letter-spacing: 1px;
-    }
-    .bank-copy {
-      font-size: 12px;
-      color: var(--primary);
-      cursor: pointer;
-      margin-top: 4px;
-      display: inline-block;
-    }
-
-    .qris-box {
-      text-align: center;
-      padding: 20px;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-    }
-    .qris-box img {
-      width: 200px;
-      height: 200px;
-      border-radius: 8px;
-      margin-bottom: 12px;
-      background: var(--light-gray);
-    }
-    .qris-box p {
-      font-size: 13px;
-      color: var(--gray);
-    }
-
-    /* Instructions */
-    .instructions {
-      background: #eff6ff;
-      border: 1px solid #bfdbfe;
-      border-radius: 10px;
-      padding: 16px;
-      margin-bottom: 20px;
-    }
-    .instructions h4 {
-      font-size: 13px;
-      font-weight: 700;
-      color: #1e40af;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .instructions ol {
-      padding-left: 18px;
-      font-size: 13px;
-      color: #1e40af;
-      line-height: 1.8;
-    }
-
-    /* Action Buttons */
-    .action-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .btn-wa {
-      background: var(--success);
-      color: white;
-      border: none;
-      padding: 14px;
-      border-radius: 10px;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: all 0.2s;
-    }
-    .btn-wa:hover { 
-      background: #16a34a; 
-      transform: translateY(-1px);
-    }
-    .btn-secondary {
-      background: var(--white);
-      color: var(--gray);
-      border: 1px solid var(--border);
-      padding: 12px;
-      border-radius: 10px;
-      font-size: 14px;
-      cursor: pointer;
-      text-align: center;
-    }
-    .btn-secondary:hover { background: var(--light-gray); }
-
-    /* ============== DOWNLOAD PAGE (AFTER PAID) ============== */
-    .download-page {
-      display: none;
-      text-align: center;
       padding: 40px 24px;
+      text-align: center;
+      margin-bottom: 24px;
+      display: none;
     }
-    .download-page.active { display: block; }
-    .download-icon {
+    .payment-status.active { display: block; }
+    .status-icon {
       width: 80px;
       height: 80px;
-      background: #dcfce7;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -569,12 +301,15 @@
       margin: 0 auto 20px;
       font-size: 36px;
     }
-    .download-page h2 {
+    .status-icon.success { background: #dcfce7; }
+    .status-icon.pending { background: #fef3c7; }
+    .status-icon.error { background: #fee2e2; }
+    .payment-status h2 {
       font-size: 22px;
       font-weight: 800;
       margin-bottom: 8px;
     }
-    .download-page p {
+    .payment-status p {
       color: var(--gray);
       font-size: 14px;
       margin-bottom: 24px;
@@ -593,8 +328,9 @@
       align-items: center;
       gap: 8px;
       margin-bottom: 12px;
+      transition: all 0.2s;
     }
-    .download-btn:hover { background: var(--primary-dark); }
+    .download-btn:hover { background: var(--primary-dark); transform: translateY(-1px); }
     .download-note {
       font-size: 12px;
       color: var(--gray);
@@ -604,6 +340,43 @@
       text-align: left;
       max-width: 400px;
       margin: 0 auto;
+    }
+    .retry-btn {
+      background: var(--white);
+      color: var(--dark);
+      border: 1px solid var(--border);
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 12px;
+    }
+    .retry-btn:hover { background: var(--light-gray); }
+
+    /* Loading Overlay */
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(255,255,255,0.9);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .loading-overlay.active { display: flex; }
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid var(--border);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
 
     /* Footer */
@@ -685,12 +458,14 @@
       </div>
     </div>
 
-    <button class="btn-primary" onclick="openCheckout()">🛒 Beli Sekarang — Rp35.000</button>
+    <button class="btn-primary" id="buyBtn" onclick="startPayment()">
+      🛒 Beli Sekarang — Rp35.000
+    </button>
 
     <div class="trust-badges">
       <span class="trust-badge">
         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-        Pembayaran Aman
+        Pembayaran Aman (Midtrans)
       </span>
       <span class="trust-badge">
         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -700,6 +475,36 @@
         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
         Instant Download
       </span>
+    </div>
+  </section>
+
+  <!-- Payment Status (Success/Pending/Error) -->
+  <section class="payment-status" id="paymentStatus">
+    <div class="status-icon success" id="statusIcon">✅</div>
+    <h2 id="statusTitle">Pembayaran Berhasil!</h2>
+    <p id="statusDesc">Terima kasih telah membeli Kasva POS. Silakan download file APK di bawah ini.</p>
+    
+    <a href="https://github.com/hardinataraja/Kasva/releases/download/v1.0.12.1/kasva.apk" class="download-btn" id="downloadBtn" download>
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+      Download Kasva APK
+    </a>
+
+    <div class="download-note">
+      <strong>Cara Instalasi:</strong><br>
+      1. Download file APK di atas<br>
+      2. Buka file APK di folder Download<br>
+      3. Izinkan "Install dari sumber tidak dikenal" jika diminta<br>
+      4. Selesai — Kasva POS siap digunakan!
+    </div>
+
+    <button class="retry-btn" id="retryBtn" onclick="startPayment()" style="display:none;">
+      Coba Bayar Lagi
+    </button>
+
+    <div style="margin-top: 20px;">
+      <a href="https://wa.me/6282111887939" target="_blank" style="color: var(--gray); font-size: 13px; text-decoration: none;">
+        Butuh bantuan? Hubungi Admin via WhatsApp →
+      </a>
     </div>
   </section>
 
@@ -741,8 +546,8 @@
         <p>Tambahkan kasir dan admin dengan hak akses berbeda.</p>
       </div>
       <div class="feature-card">
-        <h3>📱 Offline Mode</h3>
-        <p>Berjalan tanpa internet, data tersimpan lokal di perangkat.</p>
+        <h3>📱 Support Scan Barcode</h3>
+        <p>Percepat Pencarian Produk dengan fitur scan barcode.</p>
       </div>
     </div>
   </section>
@@ -754,21 +559,21 @@
       <div class="step-number">1</div>
       <div>
         <h4>Klik Beli & Pilih Metode Pembayaran</h4>
-        <p>Pilih transfer bank, e-wallet (DANA/OVO/ShopeePay), atau QRIS.</p>
+        <p>Pilih Virtual Account, E-Wallet, QRIS, atau Credit Card via Midtrans.</p>
       </div>
     </div>
     <div class="step">
       <div class="step-number">2</div>
       <div>
-        <h4>Bayar Sesuai Nominal & Konfirmasi</h4>
-        <p>Lakukan pembayaran dan kirim bukti via WhatsApp ke admin.</p>
+        <h4>Bayar Secara Otomatis Terverifikasi</h4>
+        <p>Sistem Midtrans akan memverifikasi pembayaran secara real-time.</p>
       </div>
     </div>
     <div class="step">
       <div class="step-number">3</div>
       <div>
-        <h4>Verifikasi & Download APK</h4>
-        <p>Admin verifikasi manual, halaman invoice berubah jadi link download.</p>
+        <h4>Download APK Langsung</h4>
+        <p>Setelah pembayaran sukses, tombol download akan muncul otomatis.</p>
       </div>
     </div>
   </section>
@@ -780,183 +585,10 @@
   <p style="margin-top: 4px;">Kontak: 0821-1188-7939</p>
 </footer>
 
-<!-- ========== CHECKOUT MODAL ========== -->
-<div class="modal-overlay" id="checkoutModal">
-  <div class="modal">
-
-    <!-- INVOICE VIEW -->
-    <div id="invoiceView">
-      <div class="modal-header">
-        <h2>🧾 Invoice Pembayaran</h2>
-        <button class="close-btn" onclick="closeCheckout()">×</button>
-      </div>
-
-      <div class="timer-section">
-        <span class="timer-label">⏱️ Selesaikan pembayaran dalam</span>
-        <span class="timer-countdown" id="countdown">30:00</span>
-      </div>
-
-      <div class="invoice-body">
-        <div class="invoice-id">
-          <span>No. Invoice: <code id="invoiceNumber">KSV-XXXXXX</code></span>
-          <button class="copy-btn" onclick="copyInvoice()">Salin</button>
-        </div>
-
-        <div class="order-summary">
-          <div class="order-row">
-            <span>Kasva POS — Lifetime License</span>
-            <span>Rp35.000</span>
-          </div>
-          <div class="order-row">
-            <span>Diskon</span>
-            <span style="color: var(--success);">-Rp64.000</span>
-          </div>
-          <div class="order-row total">
-            <span>Total Pembayaran</span>
-            <span style="color: var(--primary); font-size: 18px;">Rp35.000</span>
-          </div>
-        </div>
-
-        <div class="payment-section">
-          <h3>Pilih Metode Pembayaran</h3>
-          <div class="payment-tabs">
-            <button class="payment-tab active" onclick="switchTab('transfer')">🏦 Transfer Bank</button>
-            <button class="payment-tab" onclick="switchTab('ewallet')">💳 E-Wallet</button>
-            <button class="payment-tab" onclick="switchTab('qris')">📱 QRIS</button>
-          </div>
-
-          <!-- Transfer Bank -->
-          <div class="payment-content active" id="tab-transfer">
-            <div class="bank-list">
-              <div class="bank-item" onclick="selectBank(this, 'BCA', '1234567890', 'Hardinata Raja')">
-                <div class="bank-info">
-                  <h4>Bank BCA</h4>
-                  <p>a.n. Hardinata Raja</p>
-                </div>
-                <div style="text-align: right;">
-                  <div class="bank-number">1234567890</div>
-                  <span class="bank-copy" onclick="event.stopPropagation(); copyText('1234567890')">📋 Salin</span>
-                </div>
-              </div>
-              <div class="bank-item" onclick="selectBank(this, 'Mandiri', '9876543210', 'Hardinata Raja')">
-                <div class="bank-info">
-                  <h4>Bank Mandiri</h4>
-                  <p>a.n. Hardinata Raja</p>
-                </div>
-                <div style="text-align: right;">
-                  <div class="bank-number">9876543210</div>
-                  <span class="bank-copy" onclick="event.stopPropagation(); copyText('9876543210')">📋 Salin</span>
-                </div>
-              </div>
-              <div class="bank-item" onclick="selectBank(this, 'BRI', '1122334455', 'Hardinata Raja')">
-                <div class="bank-info">
-                  <h4>Bank BRI</h4>
-                  <p>a.n. Hardinata Raja</p>
-                </div>
-                <div style="text-align: right;">
-                  <div class="bank-number">1122334455</div>
-                  <span class="bank-copy" onclick="event.stopPropagation(); copyText('1122334455')">📋 Salin</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- E-Wallet -->
-          <div class="payment-content" id="tab-ewallet">
-            <div class="wallet-list">
-              <div class="wallet-item" onclick="selectWallet(this, 'DANA', '082111887939', 'Hardinata Raja')">
-                <div class="wallet-info">
-                  <h4>DANA</h4>
-                  <p>a.n. Hardinata Raja</p>
-                </div>
-                <div style="text-align: right;">
-                  <div class="bank-number">082111887939</div>
-                  <span class="bank-copy" onclick="event.stopPropagation(); copyText('082111887939')">📋 Salin</span>
-                </div>
-              </div>
-              <div class="wallet-item" onclick="selectWallet(this, 'OVO', '082111887939', 'Hardinata Raja')">
-                <div class="wallet-info">
-                  <h4>OVO</h4>
-                  <p>a.n. Hardinata Raja</p>
-                </div>
-                <div style="text-align: right;">
-                  <div class="bank-number">082111887939</div>
-                  <span class="bank-copy" onclick="event.stopPropagation(); copyText('082111887939')">📋 Salin</span>
-                </div>
-              </div>
-              <div class="wallet-item" onclick="selectWallet(this, 'ShopeePay', '082111887939', 'Hardinata Raja')">
-                <div class="wallet-info">
-                  <h4>ShopeePay</h4>
-                  <p>a.n. Hardinata Raja</p>
-                </div>
-                <div style="text-align: right;">
-                  <div class="bank-number">082111887939</div>
-                  <span class="bank-copy" onclick="event.stopPropagation(); copyText('082111887939')">📋 Salin</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- QRIS -->
-          <div class="payment-content" id="tab-qris">
-            <div class="qris-box">
-              <img src="qris.png" alt="QRIS Code" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-              <div style="display:none; padding: 40px; background: var(--light-gray); border-radius: 8px; margin-bottom: 12px;">
-                <p style="font-size: 48px; margin-bottom: 8px;">📷</p>
-                <p>QRIS Code</p>
-              </div>
-              <p>Scan kode QRIS di atas menggunakan aplikasi e-wallet atau mobile banking Anda.</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="instructions">
-          <h4>📋 Petunjuk Pembayaran</h4>
-          <ol>
-            <li>Pilih salah satu metode pembayaran di atas.</li>
-            <li>Transfer tepat <strong>Rp35.000</strong> (jangan dibulatkan).</li>
-            <li>Simpan bukti transfer/screenshot pembayaran.</li>
-            <li>Klik tombol "Saya Sudah Bayar" di bawah untuk konfirmasi via WhatsApp.</li>
-          </ol>
-        </div>
-
-        <div class="action-buttons">
-          <a class="btn-wa" id="waButton" href="#" onclick="return confirmPayment()">
-            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-            Saya Sudah Bayar — Konfirmasi via WhatsApp
-          </a>
-          <button class="btn-secondary" onclick="closeCheckout()">Nanti Saja</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- DOWNLOAD VIEW (After Paid) -->
-    <div class="download-page" id="downloadView">
-      <div class="download-icon">✅</div>
-      <h2>Pembayaran Terverifikasi!</h2>
-      <p>Terima kasih telah membeli Kasva POS. Silakan download file APK di bawah ini.</p>
-
-      <a href="https://github.com/hardinataraja/Kasva/releases/download/v1.0.12.1/kasva.apk" class="download-btn" download>
-        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-        Download Kasva APK
-      </a>
-
-      <div class="download-note">
-        <strong>Cara Instalasi:</strong><br>
-        1. Download file APK di atas<br>
-        2. Buka file APK di folder Download<br>
-        3. Izinkan "Install dari sumber tidak dikenal" jika diminta<br>
-        4. Selesai — Kasva POS siap digunakan!
-      </div>
-
-      <div style="margin-top: 20px;">
-        <a href="https://wa.me/6282111887939" target="_blank" style="color: var(--gray); font-size: 13px; text-decoration: none;">
-          Butuh bantuan? Hubungi Admin via WhatsApp →
-        </a>
-      </div>
-    </div>
-
-  </div>
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <p style="color: var(--gray); font-weight: 500;">Memuat halaman pembayaran...</p>
 </div>
 
 <!-- Lightbox -->
@@ -965,198 +597,172 @@
 </div>
 
 <script>
-// ========== DATA DUMMY (BISA DI EDIT HARDCODE) ==========
-const PAYMENT_DATA = {
-  bank: [
-    { name: 'BCA', number: '1234567890', holder: 'Hardinata Raja' },
-    { name: 'Mandiri', number: '9876543210', holder: 'Hardinata Raja' },
-    { name: 'BRI', number: '1122334455', holder: 'Hardinata Raja' }
-  ],
-  ewallet: [
-    { name: 'DANA', number: '082111887939', holder: 'Hardinata Raja' },
-    { name: 'OVO', number: '082111887939', holder: 'Hardinata Raja' },
-    { name: 'ShopeePay', number: '082111887939', holder: 'Hardinata Raja' }
-  ],
-  qris: 'qris.png',
-  adminWa: '6282111887939',
-  productName: 'Kasva POS — Lifetime License',
-  price: 35000,
-  githubRelease: 'https://github.com/hardinataraja/Kasva/releases/download/v1.0.12.1/kasva.apk'
+// ========== CONFIGURATION ==========
+const CONFIG = {
+  // Ganti dengan backend URL Anda
+  API_URL: 'https://your-backend.com/create-transaction',
+  // Fallback: jika tidak ada backend, gunakan Snap Token manual (untuk testing)
+  SNAP_TOKEN: null,
+  // Midtrans Client Key (untuk Snap.js)
+  CLIENT_KEY: 'YOUR_CLIENT_KEY',
+  // URL Download APK
+  DOWNLOAD_URL: 'https://github.com/hardinataraja/Kasva/releases/download/v1.0.12.1/kasva.apk',
+  // WhatsApp Admin
+  ADMIN_WA: '6282111887939'
 };
 
-// ========== INVOICE GENERATOR ==========
-let invoiceData = {
-  id: '',
-  method: '',
-  detail: '',
-  expiredAt: null,
-  paid: false
-};
+// ========== PAYMENT STATUS MANAGEMENT ==========
+function showPaymentStatus(status, message) {
+  const section = document.getElementById('paymentStatus');
+  const icon = document.getElementById('statusIcon');
+  const title = document.getElementById('statusTitle');
+  const desc = document.getElementById('statusDesc');
+  const downloadBtn = document.getElementById('downloadBtn');
+  const retryBtn = document.getElementById('retryBtn');
 
-let timerInterval;
+  section.classList.add('active');
+  
+  // Scroll ke status
+  section.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-function generateInvoiceId() {
-  const date = new Date();
-  const random = Math.random().toString(36).substring(2, 6).toUpperCase();
-  return `KSV-${date.getFullYear()}${String(date.getMonth()+1).padStart(2,'0')}${String(date.getDate()).padStart(2,'0')}-${random}`;
+  if (status === 'success') {
+    icon.textContent = '✅';
+    icon.className = 'status-icon success';
+    title.textContent = 'Pembayaran Berhasil!';
+    desc.textContent = message || 'Terima kasih telah membeli Kasva POS. Silakan download file APK di bawah ini.';
+    downloadBtn.style.display = 'inline-flex';
+    retryBtn.style.display = 'none';
+    
+    // Simpan status ke localStorage
+    localStorage.setItem('kasva_payment', JSON.stringify({
+      status: 'success',
+      paidAt: new Date().toISOString(),
+      orderId: currentOrderId
+    }));
+  } else if (status === 'pending') {
+    icon.textContent = '⏳';
+    icon.className = 'status-icon pending';
+    title.textContent = 'Menunggu Pembayaran';
+    desc.textContent = message || 'Silakan selesaikan pembayaran Anda. Halaman ini akan update otomatis setelah pembayaran berhasil.';
+    downloadBtn.style.display = 'none';
+    retryBtn.style.display = 'inline-block';
+  } else if (status === 'error') {
+    icon.textContent = '❌';
+    icon.className = 'status-icon error';
+    title.textContent = 'Pembayaran Gagal';
+    desc.textContent = message || 'Terjadi kesalahan. Silakan coba lagi atau hubungi admin.';
+    downloadBtn.style.display = 'none';
+    retryBtn.style.display = 'inline-block';
+  }
 }
 
-function openCheckout() {
-  // Generate new invoice
-  invoiceData.id = generateInvoiceId();
-  invoiceData.expiredAt = Date.now() + (30 * 60 * 1000); // 30 minutes
-  invoiceData.paid = false;
+let currentOrderId = null;
 
-  document.getElementById('invoiceNumber').textContent = invoiceData.id;
-  document.getElementById('checkoutModal').classList.add('active');
-  document.body.style.overflow = 'hidden';
+// ========== START PAYMENT ==========
+async function startPayment() {
+  const btn = document.getElementById('buyBtn');
+  const loading = document.getElementById('loadingOverlay');
+  
+  btn.disabled = true;
+  loading.classList.add('active');
 
-  // Reset views
-  document.getElementById('invoiceView').style.display = 'block';
-  document.getElementById('downloadView').classList.remove('active');
-
-  startTimer();
-}
-
-function closeCheckout() {
-  document.getElementById('checkoutModal').classList.remove('active');
-  document.body.style.overflow = '';
-  clearInterval(timerInterval);
-}
-
-function startTimer() {
-  clearInterval(timerInterval);
-  const countdownEl = document.getElementById('countdown');
-
-  timerInterval = setInterval(() => {
-    const now = Date.now();
-    const diff = invoiceData.expiredAt - now;
-
-    if (diff <= 0) {
-      clearInterval(timerInterval);
-      countdownEl.textContent = '00:00';
-      countdownEl.style.color = 'var(--danger)';
-      // Auto close or show expired message
+  try {
+    // Generate Order ID
+    currentOrderId = `KSV-${Date.now()}`;
+    
+    // Opsi 1: Request ke backend untuk Snap Token
+    let snapToken;
+    
+    try {
+      const response = await fetch(CONFIG.API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          order_id: currentOrderId,
+          gross_amount: 35000,
+          item_name: 'Kasva POS - Lifetime License',
+          customer_name: 'Customer',
+          customer_email: 'customer@email.com'
+        })
+      });
+      
+      if (!response.ok) throw new Error('Backend error');
+      const data = await response.json();
+      snapToken = data.token;
+    } catch (e) {
+      // Opsi 2: Jika tidak ada backend, gunakan token manual (hanya untuk testing!)
+      console.warn('Backend tidak tersedia, menggunakan mode testing');
+      alert('Mode Testing: Masukkan Snap Token manual di console atau setup backend terlebih dahulu.');
+      loading.classList.remove('active');
+      btn.disabled = false;
       return;
     }
 
-    const minutes = Math.floor(diff / 60000);
-    const seconds = Math.floor((diff % 60000) / 1000);
-    countdownEl.textContent = `${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
+    // Buka Midtrans Snap
+    loading.classList.remove('active');
+    
+    window.snap.pay(snapToken, {
+      onSuccess: function(result) {
+        console.log('Success', result);
+        showPaymentStatus('success', `Pembayaran berhasil! Order ID: ${result.order_id}`);
+      },
+      onPending: function(result) {
+        console.log('Pending', result);
+        showPaymentStatus('pending', `Pembayaran pending. Order ID: ${result.order_id}. Silakan cek status pembayaran Anda.`);
+      },
+      onError: function(result) {
+        console.log('Error', result);
+        showPaymentStatus('error', 'Pembayaran gagal. Silakan coba lagi.');
+      },
+      onClose: function() {
+        console.log('Customer closed popup');
+        btn.disabled = false;
+        // Cek status pembayaran
+        checkPaymentStatus();
+      }
+    });
 
-    if (minutes < 5) {
-      countdownEl.style.color = 'var(--danger)';
+  } catch (error) {
+    console.error('Payment error:', error);
+    loading.classList.remove('active');
+    btn.disabled = false;
+    showPaymentStatus('error', 'Gagal memuat halaman pembayaran. Silakan coba lagi.');
+  }
+}
+
+// ========== CHECK PAYMENT STATUS ==========
+async function checkPaymentStatus() {
+  // Cek localStorage dulu
+  const saved = localStorage.getItem('kasva_payment');
+  if (saved) {
+    const data = JSON.parse(saved);
+    if (data.status === 'success') {
+      showPaymentStatus('success', 'Pembayaran Anda sudah terverifikasi.');
+      return;
     }
-  }, 1000);
-}
-
-// ========== TAB SWITCHING ==========
-function switchTab(tab) {
-  document.querySelectorAll('.payment-tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.payment-content').forEach(c => c.classList.remove('active'));
-
-  event.target.classList.add('active');
-  document.getElementById(`tab-${tab}`).classList.add('active');
-}
-
-// ========== PAYMENT SELECTION ==========
-function selectBank(el, bank, number, holder) {
-  document.querySelectorAll('.bank-item').forEach(i => i.classList.remove('selected'));
-  el.classList.add('selected');
-  invoiceData.method = 'Transfer Bank';
-  invoiceData.detail = `${bank} - ${number} a.n ${holder}`;
-}
-
-function selectWallet(el, wallet, number, holder) {
-  document.querySelectorAll('.wallet-item').forEach(i => i.classList.remove('selected'));
-  el.classList.add('selected');
-  invoiceData.method = 'E-Wallet';
-  invoiceData.detail = `${wallet} - ${number} a.n ${holder}`;
-}
-
-// ========== COPY FUNCTIONS ==========
-function copyText(text) {
-  navigator.clipboard.writeText(text).then(() => {
-    const btn = event.target;
-    const original = btn.textContent;
-    btn.textContent = '✅ Tersalin';
-    setTimeout(() => btn.textContent = original, 1500);
-  });
-}
-
-function copyInvoice() {
-  const id = document.getElementById('invoiceNumber').textContent;
-  navigator.clipboard.writeText(id).then(() => {
-    const btn = event.target;
-    btn.textContent = '✅ Tersalin';
-    btn.classList.add('copied');
-    setTimeout(() => {
-      btn.textContent = 'Salin';
-      btn.classList.remove('copied');
-    }, 1500);
-  });
-}
-
-// ========== WHATSAPP CONFIRMATION ==========
-function confirmPayment() {
-  if (!invoiceData.method) {
-    alert('Silakan pilih metode pembayaran terlebih dahulu!');
-    return false;
-  }
-
-  const message = encodeURIComponent(
-    `Halo Admin Kasva,
-
-` +
-    `Saya sudah melakukan pembayaran untuk pembelian Kasva POS.
-
-` +
-    `📋 No. Invoice: ${invoiceData.id}
-` +
-    `💳 Metode: ${invoiceData.method}
-` +
-    `👤 Detail: ${invoiceData.detail}
-` +
-    `💰 Nominal: Rp35.000
-
-` +
-    `Mohon verifikasi pembayaran saya. Terima kasih!`
-  );
-
-  const waUrl = `https://wa.me/${PAYMENT_DATA.adminWa}?text=${message}`;
-  window.open(waUrl, '_blank');
-  return false;
-}
-
-// ========== ADMIN PANEL SIMULATION ==========
-// Fungsi ini untuk simulasi admin set paid
-// Di production, ini dipanggil dari backend/admin panel
-function adminSetPaid(invoiceId) {
-  if (invoiceId === invoiceData.id) {
-    invoiceData.paid = true;
-    showDownloadPage();
-    // Simpan ke localStorage agar persist
-    localStorage.setItem('kasva_paid', JSON.stringify({
-      invoiceId: invoiceData.id,
-      paidAt: new Date().toISOString()
-    }));
   }
 }
 
-function showDownloadPage() {
-  document.getElementById('invoiceView').style.display = 'none';
-  document.getElementById('downloadView').classList.add('active');
-}
-
-// ========== CHECK PAID STATUS ON LOAD ==========
+// ========== CHECK ON LOAD ==========
 window.addEventListener('load', () => {
-  const paidData = localStorage.getItem('kasva_paid');
-  if (paidData) {
-    const data = JSON.parse(paidData);
-    // Jika sudah pernah bayar, tampilkan download (simulasi)
-    // Di production, cek ke backend dulu
-    invoiceData.id = data.invoiceId;
-    invoiceData.paid = true;
+  // Cek parameter URL (callback dari Midtrans)
+  const urlParams = new URLSearchParams(window.location.search);
+  const status = urlParams.get('transaction_status');
+  const orderId = urlParams.get('order_id');
+  
+  if (status === 'capture' || status === 'settlement') {
+    showPaymentStatus('success', `Pembayaran berhasil! Order ID: ${orderId}`);
+    // Bersihkan URL
+    window.history.replaceState({}, document.title, window.location.pathname);
+  } else if (status === 'pending') {
+    showPaymentStatus('pending', `Pembayaran pending. Order ID: ${orderId}`);
+    window.history.replaceState({}, document.title, window.location.pathname);
+  } else if (status === 'deny' || status === 'cancel' || status === 'expire') {
+    showPaymentStatus('error', 'Pembayaran gagal atau dibatalkan.');
+    window.history.replaceState({}, document.title, window.location.pathname);
+  } else {
+    // Cek localStorage
+    checkPaymentStatus();
   }
 });
 
@@ -1169,17 +775,14 @@ function closeLightbox() {
   document.getElementById('lightbox').classList.remove('active');
 }
 
-// Close modal on escape key
+// Close on escape
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') {
-    closeCheckout();
-    closeLightbox();
-  }
+  if (e.key === 'Escape') closeLightbox();
 });
 
-// ========== CONSOLE INFO FOR ADMIN ==========
-console.log('%c Kasva POS Admin Panel ', 'background: #01875f; color: white; font-size: 14px; font-weight: bold; padding: 4px 8px; border-radius: 4px;');
-console.log('%cUntuk simulasi verifikasi pembayaran, jalankan di console: adminSetPaid("' + (invoiceData.id || 'KSV-XXXXXX') + '")', 'color: #6b7280;');
+// ========== CONSOLE INFO ==========
+console.log('%c Kasva POS + Midtrans ', 'background: #01875f; color: white; font-size: 14px; font-weight: bold; padding: 4px 8px; border-radius: 4px;');
+console.log('%cPastikan untuk mengganti CLIENT_KEY dan setup backend untuk generate Snap Token.', 'color: #6b7280;');
 </script>
 
 </body>
