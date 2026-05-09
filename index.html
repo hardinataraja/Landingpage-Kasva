@@ -546,8 +546,8 @@
         <p>Tambahkan kasir dan admin dengan hak akses berbeda.</p>
       </div>
       <div class="feature-card">
-        <h3>📱 Support Scan Barcode </h3>
-        <p>Pencarian Produk Cepat dengan Fitur Scan Barcode.</p>
+        <h3>📱 Support Scan Barcode</h3>
+        <p>Pencarian Produk Cepat demgam Fitur Scan Barcode.</p>
       </div>
     </div>
   </section>
@@ -598,35 +598,29 @@
 
 <script>
 // ========== CONFIGURATION ==========
-// Ganti dengan domain Vercel Anda setelah deploy
 const CONFIG = {
-  // Auto-detect: jika di localhost, pakai relative path. Jika production, pakai absolute URL
   API_URL: window.location.hostname === 'localhost' 
     ? 'http://localhost:3000/api/pay' 
     : 'https://' + window.location.hostname + '/api/pay',
   
-  // Ganti dengan Client Key dari dashboard Midtrans (Sandbox untuk testing)
   CLIENT_KEY: 'Mid-client-qvuVoDSE3CfwOEgk',
-  
-  // URL Download APK
   DOWNLOAD_URL: 'https://github.com/hardinataraja/Kasva/releases/download/v1.0.12.1/kasva.apk',
-  
-  // WhatsApp Admin
   ADMIN_WA: '6282111887939'
 };
 
+let currentOrderId = null;
+
 // ========== PAYMENT STATUS MANAGEMENT ==========
-function showPaymentStatus(status, message) {
+function showPaymentStatus(status, message, orderId) {
   const section = document.getElementById('paymentStatus');
   const icon = document.getElementById('statusIcon');
   const title = document.getElementById('statusTitle');
   const desc = document.getElementById('statusDesc');
   const downloadBtn = document.getElementById('downloadBtn');
   const retryBtn = document.getElementById('retryBtn');
+  const buyBtn = document.getElementById('buyBtn');
 
   section.classList.add('active');
-  
-  // Scroll ke status
   section.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
   if (status === 'success') {
@@ -637,30 +631,33 @@ function showPaymentStatus(status, message) {
     downloadBtn.style.display = 'inline-flex';
     retryBtn.style.display = 'none';
     
-    // Simpan status ke localStorage
+    // Sembunyikan tombol beli
+    if (buyBtn) buyBtn.style.display = 'none';
+    
+    // Simpan ke localStorage
     localStorage.setItem('kasva_payment', JSON.stringify({
       status: 'success',
       paidAt: new Date().toISOString(),
-      orderId: currentOrderId
+      orderId: orderId || currentOrderId
     }));
+    
   } else if (status === 'pending') {
     icon.textContent = '⏳';
     icon.className = 'status-icon pending';
     title.textContent = 'Menunggu Pembayaran';
-    desc.textContent = message || 'Silakan selesaikan pembayaran Anda. Halaman ini akan update otomatis setelah pembayaran berhasil.';
+    desc.textContent = message || 'Silakan selesaikan pembayaran Anda.';
     downloadBtn.style.display = 'none';
     retryBtn.style.display = 'inline-block';
+    
   } else if (status === 'error') {
     icon.textContent = '❌';
     icon.className = 'status-icon error';
     title.textContent = 'Pembayaran Gagal';
-    desc.textContent = message || 'Terjadi kesalahan. Silakan coba lagi atau hubungi admin.';
+    desc.textContent = message || 'Terjadi kesalahan. Silakan coba lagi.';
     downloadBtn.style.display = 'none';
     retryBtn.style.display = 'inline-block';
   }
 }
-
-let currentOrderId = null;
 
 // ========== START PAYMENT ==========
 async function startPayment() {
@@ -671,10 +668,8 @@ async function startPayment() {
   loading.classList.add('active');
 
   try {
-    // Generate Order ID
     currentOrderId = `KSV-${Date.now()}`;
     
-    // Request ke backend Vercel untuk Snap Token
     const response = await fetch(CONFIG.API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -689,39 +684,34 @@ async function startPayment() {
     
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.error || `HTTP ${response.status}: Gagal membuat transaksi`);
+      throw new Error(errorData.error || `HTTP ${response.status}`);
     }
     
     const data = await response.json();
     
-    if (!data.token) {
-      throw new Error('Token tidak ditemukan dalam response');
-    }
+    if (!data.token) throw new Error('Token tidak ditemukan');
 
-    // Buka Midtrans Snap
     loading.classList.remove('active');
     
     window.snap.pay(data.token, {
       onSuccess: function(result) {
-        console.log('Success', result);
-        showPaymentStatus('success', `Pembayaran berhasil! Order ID: ${result.order_id}`);
+        console.log('Success:', result);
+        showPaymentStatus('success', 'Pembayaran berhasil!', result.order_id);
         btn.disabled = false;
       },
       onPending: function(result) {
-        console.log('Pending', result);
-        showPaymentStatus('pending', `Pembayaran pending. Order ID: ${result.order_id}. Silakan cek status pembayaran Anda.`);
+        console.log('Pending:', result);
+        showPaymentStatus('pending', 'Pembayaran pending. Order ID: ' + result.order_id, result.order_id);
         btn.disabled = false;
       },
       onError: function(result) {
-        console.log('Error', result);
-        showPaymentStatus('error', 'Pembayaran gagal. Silakan coba lagi.');
+        console.log('Error:', result);
+        showPaymentStatus('error', 'Pembayaran gagal.');
         btn.disabled = false;
       },
       onClose: function() {
-        console.log('Customer closed popup');
+        console.log('Popup ditutup');
         btn.disabled = false;
-        // Cek status pembayaran
-        checkPaymentStatus();
       }
     });
 
@@ -729,43 +719,48 @@ async function startPayment() {
     console.error('Payment error:', error);
     loading.classList.remove('active');
     btn.disabled = false;
-    showPaymentStatus('error', 'Gagal memuat halaman pembayaran: ' + error.message);
+    showPaymentStatus('error', 'Gagal: ' + error.message);
   }
 }
 
-// ========== CHECK PAYMENT STATUS ==========
-async function checkPaymentStatus() {
-  // Cek localStorage dulu
+// ========== CHECK ON PAGE LOAD ==========
+window.addEventListener('load', () => {
+  // Cek localStorage dulu (untuk user yang sudah bayar sebelumnya)
   const saved = localStorage.getItem('kasva_payment');
   if (saved) {
     const data = JSON.parse(saved);
     if (data.status === 'success') {
-      showPaymentStatus('success', 'Pembayaran Anda sudah terverifikasi.');
+      showPaymentStatus('success', 'Pembayaran Anda sudah terverifikasi.', data.orderId);
       return;
     }
   }
-}
-
-// ========== CHECK ON LOAD ==========
-window.addEventListener('load', () => {
-  // Cek parameter URL (callback dari Midtrans)
+  
+  // Cek URL params (dari callback Midtrans redirect)
   const urlParams = new URLSearchParams(window.location.search);
-  const status = urlParams.get('transaction_status');
+  const status = urlParams.get('status');
   const orderId = urlParams.get('order_id');
   
-  if (status === 'capture' || status === 'settlement') {
-    showPaymentStatus('success', `Pembayaran berhasil! Order ID: ${orderId}`);
-    // Bersihkan URL
+  if (status === 'success') {
+    localStorage.setItem('kasva_payment', JSON.stringify({
+      status: 'success',
+      paidAt: new Date().toISOString(),
+      orderId: orderId
+    }));
+    showPaymentStatus('success', 'Pembayaran berhasil! Order ID: ' + orderId, orderId);
     window.history.replaceState({}, document.title, window.location.pathname);
-  } else if (status === 'pending') {
-    showPaymentStatus('pending', `Pembayaran pending. Order ID: ${orderId}`);
+    return;
+  }
+  
+  if (status === 'pending') {
+    showPaymentStatus('pending', 'Pembayaran pending. Order ID: ' + orderId, orderId);
     window.history.replaceState({}, document.title, window.location.pathname);
-  } else if (status === 'deny' || status === 'cancel' || status === 'expire') {
+    return;
+  }
+  
+  if (status === 'error') {
     showPaymentStatus('error', 'Pembayaran gagal atau dibatalkan.');
     window.history.replaceState({}, document.title, window.location.pathname);
-  } else {
-    // Cek localStorage
-    checkPaymentStatus();
+    return;
   }
 });
 
@@ -778,14 +773,9 @@ function closeLightbox() {
   document.getElementById('lightbox').classList.remove('active');
 }
 
-// Close on escape
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') closeLightbox();
 });
-
-// ========== CONSOLE INFO ==========
-console.log('%c Kasva POS + Midtrans + Vercel ', 'background: #01875f; color: white; font-size: 14px; font-weight: bold; padding: 4px 8px; border-radius: 4px;');
-console.log('%cAPI URL: ' + CONFIG.API_URL, 'color: #6b7280;');
 </script>
 
 </body>
