@@ -26,11 +26,13 @@ export default async function handler(req, res) {
       clientKey: process.env.MIDTRANS_CLIENT_KEY,
     });
 
+    // Mengambil notifikasi dari Midtrans
     const statusResponse = await apiClient.transaction.notification(req.body);
     const { order_id, transaction_status, fraud_status, gross_amount } = statusResponse;
 
-    console.log(`Notif: ${order_id} - ${transaction_status} - ${fraud_status}`);
+    console.log(`Notifikasi diterima: Order ${order_id} - Status: ${transaction_status}`);
 
+    // Menentukan status untuk aplikasi
     let status = 'pending';
     if (transaction_status === 'capture' || transaction_status === 'settlement') {
       status = 'success';
@@ -38,21 +40,22 @@ export default async function handler(req, res) {
       status = 'failed';
     }
 
-    // Simpan ke Firestore collection: "payments"
+    // Update status ke Firestore
+    // Menggunakan doc(order_id) agar sinkron dengan check-payment.js
     await db.collection('payments').doc(order_id).set({
       order_id,
-      status,
-      transaction_status,
+      status, // 'success', 'failed', atau 'pending'
+      transaction_status, // Status asli dari Midtrans untuk referensi
       fraud_status: fraud_status || null,
-      gross_amount: gross_amount || 35000,
+      gross_amount: Number(gross_amount) || 35000,
       updatedAt: new Date().toISOString(),
     }, { merge: true });
 
-    console.log(`Order ${order_id} disimpan dengan status: ${status}`);
+    console.log(`Firestore berhasil diupdate: Order ${order_id} menjadi status ${status}`);
 
     return res.status(200).json({ status: 'OK' });
   } catch (error) {
-    console.error('Webhook error:', error);
+    console.error('Webhook Error:', error);
     return res.status(500).json({ error: error.message });
   }
 }
