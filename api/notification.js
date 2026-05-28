@@ -3,7 +3,7 @@ import midtransClient from 'midtrans-client';
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 
-// Init Firebase Admin (hanya sekali)
+// Init Firebase Admin
 if (!getApps().length) {
   initializeApp({
     credential: cert({
@@ -26,36 +26,41 @@ export default async function handler(req, res) {
       clientKey: process.env.MIDTRANS_CLIENT_KEY,
     });
 
-    // Mengambil notifikasi dari Midtrans
+    // 1. Terima dan verifikasi notifikasi dari Midtrans
     const statusResponse = await apiClient.transaction.notification(req.body);
     const { order_id, transaction_status, fraud_status, gross_amount } = statusResponse;
 
-    console.log(`Notifikasi diterima: Order ${order_id} - Status: ${transaction_status}`);
+    console.log(`[MIDTRANS NOTIF] Order: ${order_id} | Status: ${transaction_status} | Fraud: ${fraud_status}`);
 
-    // Menentukan status untuk aplikasi
+    // 2. Tentukan status aplikasi berdasarkan status Midtrans
+    // Logika ini memastikan settlement/capture dianggap success
     let status = 'pending';
-    if (transaction_status === 'capture' || transaction_status === 'settlement') {
+    if (transaction_status === 'settlement' || transaction_status === 'capture') {
       status = 'success';
-    } else if (['cancel', 'expire', 'deny'].includes(transaction_status)) {
+    } else if (['cancel', 'deny', 'expire'].includes(transaction_status)) {
       status = 'failed';
+    } else {
+      status = 'pending'; // Pastikan status selain di atas tetap pending
     }
 
-    // Update status ke Firestore
-    // Menggunakan doc(order_id) agar sinkron dengan check-payment.js
+    // 3. Update ke Firestore
+    // Kita gunakan merge: true agar data lain (jika ada) tidak hilang
     await db.collection('payments').doc(order_id).set({
       order_id,
-      status, // 'success', 'failed', atau 'pending'
-      transaction_status, // Status asli dari Midtrans untuk referensi
+      status, 
+      transaction_status,
       fraud_status: fraud_status || null,
-      gross_amount: Number(gross_amount) || 35000,
+      gross_amount: Number(gross_amount),
       updatedAt: new Date().toISOString(),
     }, { merge: true });
 
-    console.log(`Firestore berhasil diupdate: Order ${order_id} menjadi status ${status}`);
+    console.log(`[FIRESTORE UPDATE] Order ${order_id} berhasil diupdate ke status: ${status}`);
 
-    return res.status(200).json({ status: 'OK' });
+    // 4. Berikan respon 200 agar Midtrans berhenti mengirim notifikasi
+    return res.status(200).json({ status: 'OK', order_id, status });
+    
   } catch (error) {
-    console.error('Webhook Error:', error);
+    console.error('[WEBHOOK ERROR]', error);
     return res.status(500).json({ error: error.message });
   }
 }
