@@ -733,8 +733,9 @@ async function startPayment() {
       },
       onPending: function(result) {
         console.log('Pending:', result);
-        showPaymentStatus('pending', 'Pembayaran pending. Order ID: ' + result.order_id, result.order_id);
+        showPaymentStatus('pending', 'Menunggu konfirmasi pembayaran...', result.order_id);
         btn.disabled = false;
+        startPolling(result.order_id);
       },
       onError: function(result) {
         console.log('Error:', result);
@@ -795,6 +796,38 @@ window.addEventListener('load', () => {
     return;
   }
 });
+
+// ========== POLLING STATUS QRIS ==========
+let pollingInterval = null;
+
+function startPolling(orderId) {
+  if (pollingInterval) clearInterval(pollingInterval);
+  
+  let attempts = 0;
+  const maxAttempts = 24; // 24 x 5 detik = 2 menit
+
+  pollingInterval = setInterval(async () => {
+    attempts++;
+    try {
+      const res = await fetch(`/api/check-payment?order_id=${orderId}`);
+      const data = await res.json();
+
+      if (data.status === 'success') {
+        clearInterval(pollingInterval);
+        showPaymentStatus('success', 'Pembayaran berhasil dikonfirmasi!', orderId);
+      } else if (data.status === 'failed') {
+        clearInterval(pollingInterval);
+        showPaymentStatus('error', 'Pembayaran gagal atau expired.');
+      }
+    } catch (e) {
+      console.error('Polling error:', e);
+    }
+
+    if (attempts >= maxAttempts) {
+      clearInterval(pollingInterval);
+    }
+  }, 5000);
+}
 
 // ========== LIGHTBOX ==========
 function openLightbox(src) {
