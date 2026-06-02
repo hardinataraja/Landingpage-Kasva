@@ -33,26 +33,55 @@ export default async function handler(req, res) {
     const { order_id, gross_amount, item_name, customer_name, customer_email } = req.body;
     const origin = req.headers.origin || 'https://' + req.headers.host;
     const finalOrderId = order_id || `KSV-${Date.now()}`;
+    const finalAmount = gross_amount || 35000;
+    const finalEmail = customer_email || 'customer@kasva.store';
+    const finalName = customer_name || 'Customer';
 
     const parameter = {
       transaction_details: {
         order_id: finalOrderId,
-        gross_amount: gross_amount || 35000,
+        gross_amount: finalAmount,
       },
       item_details: [{
         id: 'kasva-pos',
-        price: gross_amount || 35000,
+        price: finalAmount,
         quantity: 1,
         name: item_name || 'Kasva POS - Lifetime License',
       }],
       customer_details: {
-        first_name: customer_name || 'Customer',
-        email: customer_email || 'customer@email.com',
+        first_name: finalName,
+        email: finalEmail,
+      },
+      enabled_payments: [
+        'mandiri_va',
+        'bca_va',
+        'bni_va',
+        'bri_va',
+        'permata_va',
+        'other_va',
+        'gopay',
+        'shopeepay',
+        'qris',
+        'credit_card',
+        'indomaret',
+        'alfamart',
+      ],
+      bank_transfer: {
+        bank: 'mandiri',
+        va_number: '',
+        free_text: {
+          inquiry: [{ id: 'Kasva POS - Lifetime License', en: 'Kasva POS - Lifetime License' }],
+          payment: [{ id: 'Kasva POS - Lifetime License', en: 'Kasva POS - Lifetime License' }],
+        },
       },
       callbacks: {
         finish: `${origin}/?status=success&order_id=${finalOrderId}`,
         unfinish: `${origin}/?status=pending&order_id=${finalOrderId}`,
         error: `${origin}/?status=error&order_id=${finalOrderId}`,
+      },
+      expiry: {
+        unit: 'hours',
+        duration: 24,
       },
     };
 
@@ -63,9 +92,9 @@ export default async function handler(req, res) {
       order_id: finalOrderId,
       status: 'pending',
       transaction_status: 'pending',
-      gross_amount: gross_amount || 35000,
-      customer_name: customer_name || 'Customer',
-      customer_email: customer_email || 'customer@email.com',
+      gross_amount: finalAmount,
+      customer_name: finalName,
+      customer_email: finalEmail,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     });
