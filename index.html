@@ -33,11 +33,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   
-  <!-- Midtrans Snap -->
-  <script type="text/javascript" 
-    src="https://app.midtrans.com/snap/snap.js" 
-    data-client-key="Mid-client-87y7WFRRFmI31YrK"></script>
-    
+  
   <!-- Redirect vercel.app ke kasva.store -->
   <script>
     if (window.location.hostname.includes('vercel.app')) {
@@ -490,9 +486,9 @@
       </div>
     </div>
 
-    <button class="btn-primary" id="buyBtn" onclick="startPayment()">
-      🛒 Beli Sekarang — Rp35.000
-    </button>
+    <a href="/checkout" class="btn-primary" id="buyBtn">
+      Beli Sekarang — Rp35.000
+    </a>
 
     <div class="trust-badges">
       <span class="trust-badge">
@@ -529,7 +525,7 @@
       4. Selesai — Kasva POS siap digunakan!
     </div>
 
-    <button class="retry-btn" id="retryBtn" onclick="startPayment()" style="display:none;">
+    <button class="retry-btn" id="retryBtn" onclick="showCheckout()" style="display:none;">
       Coba Bayar Lagi
     </button>
 
@@ -631,16 +627,10 @@
 <script>
 // ========== CONFIGURATION ==========
 const CONFIG = {
-  API_URL: window.location.hostname === 'localhost' 
-    ? 'http://localhost:3000/api/pay' 
-    : 'https://' + window.location.hostname + '/api/pay',
-  
-  CLIENT_KEY: 'Mid-client-87y7WFRRFmI31YrK',
+  PAYMENT_LINK: 'https://app.midtrans.com/payment-links/39834f21-2c82-4660-bee2-463163554b0e',
   DOWNLOAD_URL: 'https://github.com/hardinataraja/Kasva/releases/download/v1.03/kasva.apk',
   ADMIN_WA: '6282111887939'
 };
-
-let currentOrderId = null;
 
 // ========== PAYMENT STATUS MANAGEMENT ==========
 function showPaymentStatus(status, message, orderId) {
@@ -688,71 +678,6 @@ function showPaymentStatus(status, message, orderId) {
     desc.textContent = message || 'Terjadi kesalahan. Silakan coba lagi.';
     downloadBtn.style.display = 'none';
     retryBtn.style.display = 'inline-block';
-  }
-}
-
-// ========== START PAYMENT ==========
-async function startPayment() {
-  const btn = document.getElementById('buyBtn');
-  const loading = document.getElementById('loadingOverlay');
-  
-  btn.disabled = true;
-  loading.classList.add('active');
-
-  try {
-    currentOrderId = `KSV-${Date.now()}`;
-    
-    const response = await fetch(CONFIG.API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        order_id: currentOrderId,
-        gross_amount: 35000,
-        item_name: 'Kasva POS - Lifetime License',
-        customer_name: 'Customer',
-        customer_email: 'customer@email.com'
-      })
-    });
-    
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.error || `HTTP ${response.status}`);
-    }
-    
-    const data = await response.json();
-    
-    if (!data.token) throw new Error('Token tidak ditemukan');
-
-    loading.classList.remove('active');
-    
-    window.snap.pay(data.token, {
-      onSuccess: function(result) {
-        console.log('Success:', result);
-        showPaymentStatus('success', 'Pembayaran berhasil!', result.order_id);
-        btn.disabled = false;
-      },
-      onPending: function(result) {
-        console.log('Pending:', result);
-        showPaymentStatus('pending', 'Menunggu konfirmasi pembayaran...', result.order_id);
-        btn.disabled = false;
-        startPolling(result.order_id);
-      },
-      onError: function(result) {
-        console.log('Error:', result);
-        showPaymentStatus('error', 'Pembayaran gagal.');
-        btn.disabled = false;
-      },
-      onClose: function() {
-        console.log('Popup ditutup');
-        btn.disabled = false;
-      }
-    });
-
-  } catch (error) {
-    console.error('Payment error:', error);
-    loading.classList.remove('active');
-    btn.disabled = false;
-    showPaymentStatus('error', 'Gagal: ' + error.message);
   }
 }
 

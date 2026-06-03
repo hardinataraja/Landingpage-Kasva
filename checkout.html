@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout — Kasva POS</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/png" href="/preview.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f8fafc;
+      color: #111827;
+      min-height: 100vh;
+    }
+
+    nav {
+      height: 56px;
+      background: #fff;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 12px;
+    }
+    .nav-back {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      color: #6b7280;
+      text-decoration: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
+    .nav-back:hover { color: #111827; }
+    .nav-back svg { flex-shrink: 0; }
+    .nav-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .page {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 20px 16px 40px;
+    }
+
+    /* Order Summary */
+    .order-card {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 18px 20px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .order-info { display: flex; align-items: center; gap: 14px; }
+    .order-img {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    .order-name { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+    .order-desc { font-size: 12px; color: #6b7280; }
+    .order-price { font-size: 18px; font-weight: 700; color: #01875f; white-space: nowrap; }
+
+    /* Payment list */
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #9ca3af;
+      margin: 20px 0 8px 4px;
+    }
+    .section-label:first-of-type { margin-top: 4px; }
+
+    .payment-list {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 4px;
+    }
+    .payment-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 20px;
+      cursor: pointer;
+      border-bottom: 1px solid #f3f4f6;
+      transition: background 0.1s;
+      text-decoration: none;
+      color: #111827;
+    }
+    .payment-item:last-child { border-bottom: none; }
+    .payment-item:hover { background: #f9fafb; }
+    .payment-item:active { background: #f3f4f6; }
+
+    .payment-item-name {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    /* Radio dot */
+    .radio-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid #d1d5db;
+      flex-shrink: 0;
+      transition: all 0.15s;
+    }
+    .payment-item:hover .radio-dot {
+      border-color: #01875f;
+    }
+
+    /* CTA */
+    .pay-btn {
+      display: block;
+      width: 100%;
+      background: #01875f;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 15px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      margin-top: 24px;
+      transition: background 0.15s;
+    }
+    .pay-btn:hover { background: #016d4d; }
+    .pay-btn:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    .secure-note {
+      text-align: center;
+      font-size: 12px;
+      color: #9ca3af;
+      margin-top: 14px;
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-back">
+    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+    </svg>
+  </a>
+  <span class="nav-title">Pilih Metode Pembayaran</span>
+</nav>
+
+<div class="page">
+
+  <!-- Order Summary -->
+  <div class="order-card">
+    <div class="order-info">
+      <img src="/preview.jpg" alt="Kasva POS" class="order-img">
+      <div>
+        <div class="order-name">Kasva POS</div>
+        <div class="order-desc">Lifetime License</div>
+      </div>
+    </div>
+    <div class="order-price">Rp35.000</div>
+  </div>
+
+  <!-- Transfer Bank -->
+  <div class="section-label">Transfer Bank (Virtual Account)</div>
+  <div class="payment-list">
+    <a class="payment-item" href="#" onclick="pay(event)">
+      <span class="payment-item-name">Mandiri Virtual Account</span>
+      <span class="radio-dot"></span>
+    </a>
+    <a class="payment-item" href="#" onclick="pay(event)">
+      <span class="payment-item-name">BNI Virtual Account</span>
+      <span class="radio-dot"></span>
+    </a>
+    <a class="payment-item" href="#" onclick="pay(event)">
+      <span class="payment-item-name">BRI Virtual Account</span>
+      <span class="radio-dot"></span>
+    </a>
+    <a class="payment-item" href="#" onclick="pay(event)">
+      <span class="payment-item-name">Permata Virtual Account</span>
+      <span class="radio-dot"></span>
+    </a>
+    <a class="payment-item" href="#" onclick="pay(event)">
+      <span class="payment-item-name">CIMB Virtual Account</span>
+      <span class="radio-dot"></span>
+    </a>
+    <a class="payment-item" href="#" onclick="pay(event)">
+      <span class="payment-item-name">BSI Virtual Account</span>
+      <span class="radio-dot"></span>
+    </a>
+    <a class="payment-item" href="#" onclick="pay(event)">
+      <span class="payment-item-name">Bank Lainnya</span>
+      <span class="radio-dot"></span>
+    </a>
+  </div>
+
+  <!-- E-Wallet & QRIS -->
+  <div class="section-label">E-Wallet & QRIS</div>
+  <div class="payment-list">
+    <a class="payment-item" href="#" onclick="pay(event)">
+      <span class="payment-item-name">GoPay</span>
+      <span class="radio-dot"></span>
+    </a>
+    <a class="payment-item" href="#" onclick="pay(event)">
+      <span class="payment-item-name">QRIS</span>
+      <span class="radio-dot"></span>
+    </a>
+  </div>
+
+  <div class="secure-note">Pembayaran aman diproses oleh Midtrans</div>
+
+</div>
+
+<script>
+  const PAYMENT_LINK = 'https://app.midtrans.com/payment-links/39834f21-2c82-4660-bee2-463163554b0e';
+
+  function pay(e) {
+    e.preventDefault();
+    window.location.href = PAYMENT_LINK;
+  }
+</script>
+
+</body>
+</html>
