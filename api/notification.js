@@ -1,15 +1,15 @@
 // api/notification.js
+// Webhook dari Midtrans → update subscription user di Firestore
 import midtransClient from 'midtrans-client';
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
-import { getFirestore } from 'firebase-admin/firestore';
+import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 
-// Init Firebase Admin
 if (!getApps().length) {
   initializeApp({
     credential: cert({
-      projectId: process.env.FIREBASE_PROJECT_ID,
+      projectId:   process.env.FIREBASE_PROJECT_ID,
       clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+      privateKey:  process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
     }),
   });
 }
@@ -20,47 +20,107 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
 
   try {
+    // ── 1. Verifikasi notifikasi dari Midtrans ───────────────────
     const apiClient = new midtransClient.CoreApi({
       isProduction: true,
-      serverKey: process.env.MIDTRANS_SERVER_KEY,
-      clientKey: process.env.MIDTRANS_CLIENT_KEY,
+      serverKey:    process.env.MIDTRANS_SERVER_KEY,
+      clientKey:    process.env.MIDTRANS_CLIENT_KEY,
     });
 
-    // 1. Terima dan verifikasi notifikasi dari Midtrans
-    const statusResponse = await apiClient.transaction.notification(req.body);
-    const { order_id, transaction_status, fraud_status, gross_amount } = statusResponse;
+    const notif = await apiClient.transaction.notification(req.body);
+    const { order_id, transaction_status, fraud_status, gross_amount } = notif;
 
-    console.log(`[MIDTRANS NOTIF] Order: ${order_id} | Status: ${transaction_status} | Fraud: ${fraud_status}`);
+    console.log(`[NOTIF] ${order_id} | ${transaction_status} | fraud: ${fraud_status}`);
 
-    // 2. Tentukan status aplikasi berdasarkan status Midtrans
-    // Logika ini memastikan settlement/capture dianggap success
-    let status = 'pending';
-    if (transaction_status === 'settlement' || transaction_status === 'capture') {
-      status = 'success';
-    } else if (['cancel', 'deny', 'expire'].includes(transaction_status)) {
-      status = 'failed';
-    } else {
-      status = 'pending'; // Pastikan status selain di atas tetap pending
-    }
+    // ── 2. Tentukan status ───────────────────────────────────────
+    const isSuccess = (
+      transaction_status === 'settlement' ||
+      (transaction_status === 'capture' && fraud_status === 'accept')
+    );
+    const isFailed = ['cancel', 'deny', 'expire'].includes(transaction_status);
+    const status   = isSuccess ? 'success' : isFailed ? 'failed' : 'pending';
 
-    // 3. Update ke Firestore
-    // Kita gunakan merge: true agar data lain (jika ada) tidak hilang
-    await db.collection('payments').doc(order_id).set({
-      order_id,
-      status, 
+    // ── 3. Update collection orders ──────────────────────────────
+    await db.collection('orders').doc(order_id).set({
+      status,
       transaction_status,
-      fraud_status: fraud_status || null,
-      gross_amount: Number(gross_amount),
-      updatedAt: new Date().toISOString(),
+      fraud_status:    fraud_status || null,
+      gross_amount:    Number(gross_amount),
+      updatedAt:       new Date().toISOString(),
     }, { merge: true });
 
-    console.log(`[FIRESTORE UPDATE] Order ${order_id} berhasil diupdate ke status: ${status}`);
+    // ── 4. Jika sukses → update subscription user ────────────────
+    if (isSuccess) {
+      // Ambil data order untuk tahu uid, plan, dan durasi
+      const orderSnap = await db.collection('orders').doc(order_id).get();
+      if (!orderSnap.exists) {
+        console.error(`[NOTIF] Order ${order_id} tidak ditemukan di Firestore.`);
+        return res.status(200).json({ status: 'OK' }); // tetap 200 agar Midtrans tidak retry
+      }
 
-    // 4. Berikan respon 200 agar Midtrans berhenti mengirim notifikasi
-    return res.status(200).json({ status: 'OK', order_id, status });
-    
-  } catch (error) {
-    console.error('[WEBHOOK ERROR]', error);
-    return res.status(500).json({ error: error.message });
+      const order = orderSnap.data();
+      const { uid, plan, billing, months } = order;
+
+      if (!uid) {
+        // Tidak ada uid → tidak bisa update subscription
+        // Bisa terjadi kalau user buka subscribe.html tanpa dari app
+        console.warn(`[NOTIF] Order ${order_id} tidak punya uid. Skip subscription update.`);
+        return res.status(200).json({ status: 'OK' });
+      }
+
+      // ── Hitung expiredAt ─────────────────────────────────────
+      const now = new Date();
+
+      // Cek apakah user sudah punya subscription aktif yang belum expired
+      // Kalau iya, perpanjang dari tanggal expiry yang ada (bukan dari sekarang)
+      const subSnap = await db
+        .collection('users').doc(uid)
+        .collection('subscription').doc('data')
+        .get();
+
+      let baseDate = now;
+      if (subSnap.exists) {
+        const existing = subSnap.data();
+        if (
+          existing.plan === plan &&
+          existing.status === 'active' &&
+          existing.expiredAt
+        ) {
+          const existingExpiry = new Date(existing.expiredAt);
+          if (existingExpiry > now) {
+            // Perpanjang dari tanggal expiry yang ada
+            baseDate = existingExpiry;
+            console.log(`[NOTIF] Perpanjang dari ${existingExpiry.toISOString()}`);
+          }
+        }
+      }
+
+      const expiredAt = new Date(baseDate);
+      expiredAt.setMonth(expiredAt.getMonth() + (months || 1));
+
+      // ── Update subscription di Firestore ──────────────────────
+      await db
+        .collection('users').doc(uid)
+        .collection('subscription').doc('data')
+        .set({
+          plan,
+          billing,
+          status:     'active',
+          expiredAt:  expiredAt.toISOString(),
+          orderId:    order_id,
+          startedAt:  now.toISOString(),
+          lastPaidAt: now.toISOString(),
+        }, { merge: true });
+
+      console.log(`[SUBSCRIPTION] uid=${uid} plan=${plan}/${billing} expiredAt=${expiredAt.toISOString()}`);
+    }
+
+    // ── 5. Selalu balas 200 agar Midtrans tidak retry ────────────
+    return res.status(200).json({ status: 'OK', order_id });
+
+  } catch (err) {
+    console.error('[WEBHOOK ERROR]', err);
+    // Tetap 200 untuk transaksi yang sudah diproses (idempotent)
+    return res.status(500).json({ error: err.message });
   }
 }
