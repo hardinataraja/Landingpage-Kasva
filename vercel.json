@@ -17,6 +17,14 @@
     {
       "src": "/api/(.*)",
       "dest": "/api/$1"
+    },
+    {
+      "src": "/subscribe",
+      "dest": "/subscribe.html"
+    },
+    {
+      "src": "/",
+      "dest": "/index.html"
     }
   ],
   "headers": [
