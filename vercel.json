@@ -23,6 +23,10 @@
       "dest": "/subscribe.html"
     },
     {
+      "src": "/privacy-policy",
+      "dest": "/privacy-policy.html"
+    },
+    {
       "src": "/",
       "dest": "/index.html"
     }
