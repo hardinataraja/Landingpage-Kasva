@@ -1,48 +1,524 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <title>Privacy Policy - Kasva POS</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kebijakan Privasi — Kasva POS</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 800px;
-      margin: 40px auto;
-      padding: 20px;
-      line-height: 1.6;
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary: #6C63FF;
+      --primary-light: #EEF0FF;
+      --text: #1A1A2E;
+      --text-secondary: #64647A;
+      --border: #E8E8F0;
+      --bg: #F8F8FC;
+      --white: #FFFFFF;
     }
-    h1, h2 {
-      color: #222;
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    /* Header */
+    header {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #6C63FF, #8B5CF6);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .logo-text {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .logo-text span {
+      color: var(--primary);
+    }
+
+    /* Hero */
+    .hero {
+      background: linear-gradient(135deg, #6C63FF 0%, #8B5CF6 100%);
+      color: white;
+      padding: 48px 24px 40px;
+      text-align: center;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 100px;
+      padding: 4px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .hero h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      line-height: 1.3;
+    }
+
+    .hero p {
+      font-size: 14px;
+      opacity: 0.85;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .hero-meta {
+      margin-top: 20px;
+      font-size: 13px;
+      opacity: 0.7;
+    }
+
+    /* Content */
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 32px 24px 64px;
+    }
+
+    /* Section */
+    .section {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      background: var(--white);
+    }
+
+    .section-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--primary-light);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .section-body {
+      padding: 20px 24px;
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    .section-body p {
+      margin-bottom: 12px;
+    }
+
+    .section-body p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Permission list */
+    .perm-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .perm-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 14px;
+      background: var(--bg);
+      border-radius: 10px;
+    }
+
+    .perm-icon {
+      font-size: 18px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .perm-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    .perm-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* Data table */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .data-table th {
+      text-align: left;
+      padding: 10px 12px;
+      background: var(--bg);
+      font-weight: 600;
+      color: var(--text);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .data-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-secondary);
+      vertical-align: top;
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .badge-yes { background: #DCFCE7; color: #16A34A; }
+    .badge-no  { background: #FEF2F2; color: #DC2626; }
+
+    /* Contact */
+    .contact-card {
+      background: var(--primary-light);
+      border: 1px solid #D4D0FF;
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .contact-card a {
+      color: var(--primary);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      border-top: 1px solid var(--border);
+      background: var(--white);
     }
   </style>
 </head>
 <body>
 
-<h1>Privacy Policy – Kasva POS</h1>
-<p><strong>Effective Date:</strong> 11 April 2026</p>
+  <header>
+    <div class="logo-icon">🏪</div>
+    <div class="logo-text">Kasva <span>POS</span></div>
+  </header>
 
-<h2>1. Informasi yang Kami Kumpulkan</h2>
-<p>Kami dapat mengumpulkan informasi akun (nama dan email melalui login Google), data bisnis seperti produk dan transaksi, serta informasi perangkat untuk meningkatkan layanan.</p>
+  <div class="hero">
+    <div class="hero-badge">Legal</div>
+    <h1>Kebijakan Privasi</h1>
+    <p>Kami berkomitmen menjaga keamanan dan privasi data Anda sebagai pengguna Kasva POS.</p>
+    <div class="hero-meta">Berlaku sejak: Juni 2025 &nbsp;·&nbsp; Versi 1.0</div>
+  </div>
 
-<h2>2. Penggunaan Informasi</h2>
-<p>Informasi digunakan untuk menjalankan layanan Kasva POS, menyimpan data transaksi, meningkatkan performa aplikasi, dan memberikan dukungan pengguna.</p>
+  <div class="container">
 
-<h2>3. Keamanan Data</h2>
-<p>Kami menggunakan sistem cloud yang aman untuk menyimpan data. Kami berupaya melindungi informasi pengguna dari akses tidak sah.</p>
+    <!-- Pendahuluan -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon">📋</div>
+        <div class="section-title">Pendahuluan</div>
+      </div>
+      <div class="section-body">
+        <p>Kasva POS ("kami", "aplikasi") adalah aplikasi kasir point-of-sale yang dikembangkan untuk membantu pelaku usaha mengelola transaksi, produk, dan laporan keuangan.</p>
+        <p>Kebijakan Privasi ini menjelaskan bagaimana kami mengumpulkan, menggunakan, dan melindungi informasi Anda saat menggunakan aplikasi Kasva POS di perangkat Android.</p>
+        <p>Dengan menggunakan aplikasi ini, Anda menyetujui kebijakan yang tertera di halaman ini.</p>
+      </div>
+    </div>
 
-<h2>4. Berbagi Informasi</h2>
-<p>Kami tidak menjual atau membagikan data pribadi pengguna kepada pihak ketiga kecuali diwajibkan oleh hukum.</p>
+    <!-- Data yang dikumpulkan -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon">🗂️</div>
+        <div class="section-title">Data yang Kami Kumpulkan</div>
+      </div>
+      <div class="section-body">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Jenis Data</th>
+              <th>Contoh</th>
+              <th>Disimpan di Server</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Informasi akun</td>
+              <td>Nama, email, foto profil (via Google Sign-In)</td>
+              <td><span class="badge badge-yes">Ya</span></td>
+            </tr>
+            <tr>
+              <td>Data transaksi</td>
+              <td>Riwayat penjualan, jumlah, metode pembayaran</td>
+              <td><span class="badge badge-yes">Ya</span></td>
+            </tr>
+            <tr>
+              <td>Data produk</td>
+              <td>Nama produk, harga, stok, kategori</td>
+              <td><span class="badge badge-yes">Ya</span></td>
+            </tr>
+            <tr>
+              <td>Data kasir</td>
+              <td>Nama kasir, PIN, role (owner/kasir)</td>
+              <td><span class="badge badge-yes">Ya</span></td>
+            </tr>
+            <tr>
+              <td>Data perangkat</td>
+              <td>Model perangkat, versi OS (untuk debug)</td>
+              <td><span class="badge badge-no">Tidak</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
 
-<h2>5. Layanan Pihak Ketiga</h2>
-<p>Aplikasi dapat menggunakan layanan pihak ketiga seperti Google Login dan layanan hosting cloud.</p>
+    <!-- Izin aplikasi -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon">🔐</div>
+        <div class="section-title">Izin yang Diminta Aplikasi</div>
+      </div>
+      <div class="section-body">
+        <ul class="perm-list">
+          <li class="perm-item">
+            <div class="perm-icon">🌐</div>
+            <div>
+              <div class="perm-name">Internet & Akses Jaringan</div>
+              <div class="perm-desc">Diperlukan untuk sinkronisasi data transaksi, produk, dan akun ke server Firebase secara real-time.</div>
+            </div>
+          </li>
+          <li class="perm-item">
+            <div class="perm-icon">📷</div>
+            <div>
+              <div class="perm-name">Kamera</div>
+              <div class="perm-desc">Digunakan untuk memindai barcode produk saat proses transaksi atau penambahan produk.</div>
+            </div>
+          </li>
+          <li class="perm-item">
+            <div class="perm-icon">📁</div>
+            <div>
+              <div class="perm-name">Penyimpanan (Storage)</div>
+              <div class="perm-desc">Digunakan untuk menyimpan file laporan (PDF, Excel) yang diekspor dari aplikasi ke perangkat Anda.</div>
+            </div>
+          </li>
+          <li class="perm-item">
+            <div class="perm-icon">🖨️</div>
+            <div>
+              <div class="perm-name">Bluetooth</div>
+              <div class="perm-desc">Digunakan untuk menghubungkan dan mencetak struk ke printer thermal via koneksi Bluetooth.</div>
+            </div>
+          </li>
+          <li class="perm-item">
+            <div class="perm-icon">📍</div>
+            <div>
+              <div class="perm-name">Lokasi</div>
+              <div class="perm-desc">Diperlukan oleh sistem Android untuk pemindaian perangkat Bluetooth terdekat (printer). Kami tidak menyimpan atau melacak lokasi Anda.</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
 
-<h2>6. Hak Pengguna</h2>
-<p>Pengguna dapat meminta penghapusan akun dengan menghubungi email resmi kami.</p>
+    <!-- Penggunaan data -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon">⚙️</div>
+        <div class="section-title">Bagaimana Kami Menggunakan Data</div>
+      </div>
+      <div class="section-body">
+        <p>Data yang dikumpulkan digunakan semata-mata untuk:</p>
+        <ul style="padding-left: 20px; margin-top: 8px; display: flex; flex-direction: column; gap: 6px;">
+          <li>Menjalankan fitur aplikasi kasir (transaksi, produk, laporan)</li>
+          <li>Menyinkronkan data antar perangkat yang menggunakan akun yang sama</li>
+          <li>Mengidentifikasi dan memperbaiki masalah teknis pada aplikasi</li>
+          <li>Mengelola langganan dan lisensi penggunaan aplikasi</li>
+        </ul>
+        <p style="margin-top: 14px;"><strong>Kami tidak menjual, menyewakan, atau membagikan data Anda kepada pihak ketiga untuk tujuan pemasaran.</strong></p>
+      </div>
+    </div>
 
-<h2>7. Kontak</h2>
-<p>Email: support@kasva.store<br>
-Website: https://kasva.store</p>
+    <!-- Penyimpanan data -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon">☁️</div>
+        <div class="section-title">Penyimpanan & Keamanan Data</div>
+      </div>
+      <div class="section-body">
+        <p>Data Anda disimpan di <strong>Google Firebase (Firestore)</strong> yang dikelola oleh Google LLC. Firebase menggunakan enkripsi data saat transit (TLS) dan saat tersimpan.</p>
+        <p>Akses ke data hanya dapat dilakukan oleh akun yang terautentikasi. Kami menerapkan Firebase Security Rules untuk memastikan setiap pengguna hanya dapat mengakses data miliknya sendiri.</p>
+        <p>Informasi lebih lanjut tentang keamanan Google Firebase dapat dilihat di <a href="https://firebase.google.com/support/privacy" target="_blank" style="color: var(--primary);">firebase.google.com/support/privacy</a>.</p>
+      </div>
+    </div>
+
+    <!-- Layanan pihak ketiga -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon">🔗</div>
+        <div class="section-title">Layanan Pihak Ketiga</div>
+      </div>
+      <div class="section-body">
+        <p>Aplikasi ini menggunakan layanan pihak ketiga berikut yang memiliki kebijakan privasi masing-masing:</p>
+        <ul style="padding-left: 20px; margin-top: 8px; display: flex; flex-direction: column; gap: 6px;">
+          <li><strong>Google Firebase</strong> — autentikasi dan penyimpanan data</li>
+          <li><strong>Google Sign-In</strong> — login akun Google</li>
+          <li><strong>Midtrans</strong> — pemrosesan pembayaran langganan</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Hak pengguna -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon">👤</div>
+        <div class="section-title">Hak Pengguna</div>
+      </div>
+      <div class="section-body">
+        <p>Anda memiliki hak untuk:</p>
+        <ul style="padding-left: 20px; margin-top: 8px; display: flex; flex-direction: column; gap: 6px;">
+          <li>Mengakses data yang kami simpan tentang Anda</li>
+          <li>Meminta penghapusan akun dan seluruh data terkait</li>
+          <li>Meminta koreksi data yang tidak akurat</li>
+        </ul>
+        <p style="margin-top: 12px;">Untuk mengajukan permintaan tersebut, silakan hubungi kami melalui kontak di bawah.</p>
+      </div>
+    </div>
+
+    <!-- Hapus Akun -->
+    <div class="section" id="hapus-akun">
+      <div class="section-header">
+        <div class="section-icon">🗑️</div>
+        <div class="section-title">Pengajuan Penghapusan Akun</div>
+      </div>
+      <div class="section-body">
+        <p>Anda dapat mengajukan penghapusan akun dan seluruh data yang terkait kapan saja. Setelah permintaan diproses, data berikut akan dihapus secara permanen:</p>
+        <ul style="padding-left: 20px; margin-top: 8px; margin-bottom: 16px; display: flex; flex-direction: column; gap: 6px;">
+          <li>Informasi akun (nama, email)</li>
+          <li>Data produk dan kategori</li>
+          <li>Riwayat transaksi</li>
+          <li>Data kasir yang terdaftar</li>
+          <li>Laporan dan data keuangan</li>
+        </ul>
+
+        <div style="background: #FEF9EC; border: 1px solid #FDE68A; border-radius: 10px; padding: 12px 16px; margin-bottom: 16px; font-size: 13px; color: #92400E;">
+          ⚠️ <strong>Perhatian:</strong> Penghapusan akun bersifat permanen dan tidak dapat dibatalkan. Pastikan Anda telah mengekspor semua data yang diperlukan sebelum mengajukan permintaan.
+        </div>
+
+        <p style="font-weight: 600; color: var(--text); margin-bottom: 10px;">Cara mengajukan penghapusan akun:</p>
+        <ol style="padding-left: 20px; display: flex; flex-direction: column; gap: 8px; font-size: 14px;">
+          <li>Kirim email ke <a href="mailto:support@kasva.store" style="color: var(--primary); font-weight: 600;">support@kasva.store</a></li>
+          <li>Gunakan subjek: <strong>"Permintaan Penghapusan Akun"</strong></li>
+          <li>Sertakan email akun yang terdaftar di Kasva POS</li>
+          <li>Kami akan memproses permintaan dalam <strong>7 hari kerja</strong></li>
+        </ol>
+
+        <div style="margin-top: 16px;">
+          <a href="mailto:moesahardinata@gmail.com?subject=Permintaan%20Penghapusan%20Akun&body=Halo%20Tim%20Kasva%2C%0A%0ASaya%20mengajukan%20permintaan%20penghapusan%20akun%20dengan%20detail%20berikut%3A%0A%0ANama%3A%20%0AEmail%20Terdaftar%3A%20%0A%0ATerima%20kasih."
+            style="display: inline-flex; align-items: center; gap: 8px; background: var(--primary); color: white; padding: 12px 20px; border-radius: 10px; text-decoration: none; font-size: 14px; font-weight: 600;">
+            📧 Ajukan Penghapusan Akun
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Perubahan kebijakan -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon">🔄</div>
+        <div class="section-title">Perubahan Kebijakan</div>
+      </div>
+      <div class="section-body">
+        <p>Kami dapat memperbarui Kebijakan Privasi ini dari waktu ke waktu. Perubahan akan diberitahukan melalui pembaruan aplikasi atau notifikasi dalam aplikasi.</p>
+        <p>Penggunaan aplikasi setelah perubahan berlaku dianggap sebagai persetujuan terhadap kebijakan yang diperbarui.</p>
+      </div>
+    </div>
+
+    <!-- Kontak -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon">✉️</div>
+        <div class="section-title">Hubungi Kami</div>
+      </div>
+      <div class="section-body">
+        <p style="margin-bottom: 14px;">Jika Anda memiliki pertanyaan atau permintaan terkait kebijakan privasi ini, hubungi kami:</p>
+        <div class="contact-card">
+          <div style="font-size: 24px;">📧</div>
+          <div>
+            <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 2px;">Email</div>
+            <a href="mailto:moesahardinata@gmail.com">moesahardinata@gmail.com</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    &copy; 2025 Kasva POS. Seluruh hak cipta dilindungi.<br />
+    <span style="margin-top: 4px; display: inline-block;">kasva.store</span>
+  </footer>
 
 </body>
 </html>
