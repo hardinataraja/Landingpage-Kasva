@@ -356,33 +356,8 @@
   <!-- Plan cards -->
   <div class="plans">
 
-    <!-- Starter -->
-    <div class="plan-card silver" data-plan="starter" data-billing="monthly" data-price="49000" onclick="selectPlan(this)">
-      <div class="plan-row">
-        <div class="plan-radio"><div class="plan-radio-dot"></div></div>
-        <div class="plan-info">
-          <div class="plan-name-row">
-            <span class="plan-name">Starter</span>
-          </div>
-          <div class="plan-subtitle">Langganan bulanan</div>
-        </div>
-        <div class="plan-price">
-          <div class="plan-price-main">Rp 49.000</div>
-          <div class="plan-price-sub">/bulan</div>
-        </div>
-      </div>
-      <div class="plan-features">
-        <div class="feature-item"><div class="feature-dot">✓</div>Produk & kategori unlimited</div>
-        <div class="feature-item"><div class="feature-dot">✓</div>Laporan 30 hari</div>
-        <div class="feature-item"><div class="feature-dot">✓</div>Export PDF & Excel</div>
-        <div class="feature-item"><div class="feature-dot">✓</div>Kasbon & barcode scanner</div>
-        <div class="feature-item"><div class="feature-dot">✓</div>Stock opname</div>
-        <div class="feature-item"><div class="feature-dot">✓</div>Kustomisasi struk</div>
-      </div>
-    </div>
-
     <!-- Pro Bulanan -->
-    <div class="plan-card gold" data-plan="pro" data-billing="monthly" data-price="99000" onclick="selectPlan(this)">
+    <div class="plan-card gold" data-plan="pro" data-billing="monthly" data-price="19000" onclick="selectPlan(this)">
       <div class="plan-row">
         <div class="plan-radio"><div class="plan-radio-dot"></div></div>
         <div class="plan-info">
@@ -392,41 +367,42 @@
           <div class="plan-subtitle">Langganan bulanan</div>
         </div>
         <div class="plan-price">
-          <div class="plan-price-main">Rp 99.000</div>
+          <div class="plan-price-main">Rp 19.000</div>
           <div class="plan-price-sub">/bulan</div>
         </div>
       </div>
       <div class="plan-features">
-        <div class="feature-item"><div class="feature-dot">✓</div>Semua fitur Starter</div>
+        <div class="feature-item"><div class="feature-dot">✓</div>Produk & kategori unlimited</div>
         <div class="feature-item"><div class="feature-dot">✓</div>Laporan unlimited</div>
-        <div class="feature-item"><div class="feature-dot">✓</div>Multi kasir</div>
-        <div class="feature-item"><div class="feature-dot">✓</div>Laporan per kasir</div>
+        <div class="feature-item"><div class="feature-dot">✓</div>Export PDF & Excel</div>
+        <div class="feature-item"><div class="feature-dot">✓</div>Kasbon & barcode scanner</div>
+        <div class="feature-item"><div class="feature-dot">✓</div>Stock opname & kustomisasi struk</div>
+        <div class="feature-item"><div class="feature-dot">✓</div>Multi kasir & laporan per kasir</div>
         <div class="feature-item"><div class="feature-dot">✓</div>Backup cloud</div>
       </div>
     </div>
 
     <!-- Pro Tahunan -->
-    <div class="plan-card deep-gold selected" data-plan="pro" data-billing="yearly" data-price="599000" onclick="selectPlan(this)">
+    <div class="plan-card deep-gold selected" data-plan="pro" data-billing="yearly" data-price="199000" onclick="selectPlan(this)">
       <div class="plan-row">
         <div class="plan-radio"><div class="plan-radio-dot"></div></div>
         <div class="plan-info">
           <div class="plan-name-row">
             <span class="plan-name">Pro Tahunan</span>
             <span class="plan-badge badge-best">TERLARIS</span>
-            <span class="plan-badge badge-save">HEMAT 50%</span>
+            <span class="plan-badge badge-save">HEMAT 13%</span>
           </div>
           <div class="plan-subtitle">Bayar sekali, aktif 12 bulan</div>
         </div>
         <div class="plan-price">
-          <div class="plan-price-main">Rp 599.000</div>
-          <div class="plan-price-sub">≈ Rp 49.900/bln</div>
+          <div class="plan-price-main">Rp 199.000</div>
+          <div class="plan-price-sub">≈ Rp 16.500/bln</div>
         </div>
       </div>
       <div class="plan-features">
         <div class="feature-item"><div class="feature-dot">✓</div>Semua fitur Pro</div>
         <div class="feature-item"><div class="feature-dot">✓</div>12 bulan penuh</div>
         <div class="feature-item"><div class="feature-dot">✓</div>Prioritas support</div>
-        <div class="feature-item"><div class="feature-dot">✓</div>Backup cloud</div>
         <div class="feature-item"><div class="feature-dot">✓</div>Fitur baru lebih awal</div>
       </div>
     </div>
@@ -453,11 +429,11 @@
   <!-- Summary + CTA -->
   <div class="summary">
     <span class="summary-label">Total Pembayaran</span>
-    <span class="summary-price deep-gold" id="summaryPrice">Rp 599.000</span>
+    <span class="summary-price deep-gold" id="summaryPrice">Rp 199.000</span>
   </div>
 
   <button class="cta-btn deep-gold-btn" id="ctaBtn" onclick="handleCheckout()">
-    <span id="ctaLabel">Bayar Sekarang — Rp 599.000</span>
+    <span id="ctaLabel">Bayar Sekarang — Rp 199.000</span>
     <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
   </button>
 
