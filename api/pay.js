@@ -17,9 +17,8 @@ const db = getFirestore();
 
 // ── Harga & durasi resmi ─────────────────────────────────────────
 const PLANS = {
-  'starter-monthly': { price: 49000,  label: 'Kasva Starter Bulanan',   months: 1  },
-  'pro-monthly':     { price: 99000,  label: 'Kasva Pro Bulanan',        months: 1  },
-  'pro-yearly':      { price: 599000, label: 'Kasva Pro Tahunan',        months: 12 },
+  'pro-monthly': { price: 19000,  label: 'Kasva Pro Bulanan', months: 1  },
+  'pro-yearly':  { price: 199000, label: 'Kasva Pro Tahunan', months: 12 },
 };
 
 export default async function handler(req, res) {
