@@ -16,6 +16,32 @@ if (!getApps().length) {
 
 const db = getFirestore();
 
+// Catat notifikasi yang "nyangkut" (order tidak ketemu / tidak ada uid) ke
+// Firestore, bukan cuma console.log — log Vercel default cuma nyimpen
+// beberapa waktu terakhir (gampang kelewat), sementara collection ini bisa
+// dicek kapan saja lewat Firestore Console atau admin panel.
+// Ini persis kasus DANA yang pernah ketemu: order_id di webhook Midtrans
+// tidak sama dengan order_id asli yang dibuat pay.js.
+async function logFailedNotification(reason, notif, orderData = null) {
+  try {
+    await db.collection('failed_notifications').add({
+      reason,                                    // 'order_not_found' | 'missing_uid'
+      orderIdFromWebhook: notif.order_id ?? null, // order_id yang dikirim Midtrans (bisa beda dari order asli)
+      transactionId:      notif.transaction_id ?? null,
+      paymentType:         notif.payment_type ?? null,
+      transactionStatus:   notif.transaction_status ?? null,
+      fraudStatus:         notif.fraud_status ?? null,
+      grossAmount:         notif.gross_amount ? Number(notif.gross_amount) : null,
+      orderDataFound:      orderData,             // isi dokumen orders/{order_id} kalau ada (buat bandingin)
+      resolved:            false,                 // ubah manual jadi true setelah diaktifkan lewat admin panel
+      createdAt:           new Date().toISOString(),
+    });
+  } catch (logErr) {
+    // Jangan sampai kegagalan logging bikin webhook utama ikut gagal
+    console.error('[NOTIF] Gagal simpan failed_notifications:', logErr.message);
+  }
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
 
@@ -55,6 +81,7 @@ export default async function handler(req, res) {
       const orderSnap = await db.collection('orders').doc(order_id).get();
       if (!orderSnap.exists) {
         console.error(`[NOTIF] Order ${order_id} tidak ditemukan di Firestore.`);
+        await logFailedNotification('order_not_found', notif);
         return res.status(200).json({ status: 'OK' }); // tetap 200 agar Midtrans tidak retry
       }
 
@@ -63,8 +90,12 @@ export default async function handler(req, res) {
 
       if (!uid) {
         // Tidak ada uid → tidak bisa update subscription
-        // Bisa terjadi kalau user buka subscribe.html tanpa dari app
+        // Bisa terjadi kalau user buka subscribe.html tanpa dari app,
+        // atau (kasus yang pernah ketemu) channel pembayaran tertentu
+        // seperti DANA mengirim order_id berbeda di webhook dibanding
+        // order_id asli yang dibuat pay.js.
         console.warn(`[NOTIF] Order ${order_id} tidak punya uid. Skip subscription update.`);
+        await logFailedNotification('missing_uid', notif, order);
         return res.status(200).json({ status: 'OK' });
       }
 
