@@ -20,24 +20,21 @@ const db = getFirestore();
 // Firestore, bukan cuma console.log — log Vercel default cuma nyimpen
 // beberapa waktu terakhir (gampang kelewat), sementara collection ini bisa
 // dicek kapan saja lewat Firestore Console atau admin panel.
-// Ini persis kasus DANA yang pernah ketemu: order_id di webhook Midtrans
-// tidak sama dengan order_id asli yang dibuat pay.js.
 async function logFailedNotification(reason, notif, orderData = null) {
   try {
     await db.collection('failed_notifications').add({
-      reason,                                    // 'order_not_found' | 'missing_uid'
-      orderIdFromWebhook: notif.order_id ?? null, // order_id yang dikirim Midtrans (bisa beda dari order asli)
+      reason,
+      orderIdFromWebhook: notif.order_id ?? null,
       transactionId:      notif.transaction_id ?? null,
       paymentType:         notif.payment_type ?? null,
       transactionStatus:   notif.transaction_status ?? null,
       fraudStatus:         notif.fraud_status ?? null,
       grossAmount:         notif.gross_amount ? Number(notif.gross_amount) : null,
-      orderDataFound:      orderData,             // isi dokumen orders/{order_id} kalau ada (buat bandingin)
-      resolved:            false,                 // ubah manual jadi true setelah diaktifkan lewat admin panel
+      orderDataFound:      orderData,
+      resolved:            false,
       createdAt:           new Date().toISOString(),
     });
   } catch (logErr) {
-    // Jangan sampai kegagalan logging bikin webhook utama ikut gagal
     console.error('[NOTIF] Gagal simpan failed_notifications:', logErr.message);
   }
 }
@@ -53,10 +50,31 @@ export default async function handler(req, res) {
       clientKey:    process.env.MIDTRANS_CLIENT_KEY,
     });
 
-    const notif = await apiClient.transaction.notification(req.body);
+    const rawNotif = await apiClient.transaction.notification(req.body);
+
+    // Konfirmasi resmi dari Midtrans Support: untuk channel DANA, BSI VA,
+    // SeaBank VA, dan Danamon VA, field order_id pada body webhook TIDAK
+    // bisa diandalkan sebagai identifier — channel-channel ini pakai
+    // transaction_id sebagai acuan. Daripada bikin daftar channel yang
+    // harus di-cek manual (rawan kelewat kalau ada channel baru), kita
+    // SELALU re-fetch status resmi via GET Transaction Status pakai
+    // transaction_id, lalu pakai order_id yang beneran valid dari situ —
+    // ini juga sekaligus memverifikasi notifikasi langsung dari Midtrans
+    // (bukan cuma percaya body webhook mentah), lebih aman untuk semua
+    // channel, bukan cuma yang 4 itu.
+    let notif = rawNotif;
+    try {
+      const statusResp = await apiClient.transaction.status(rawNotif.transaction_id);
+      notif = { ...rawNotif, ...statusResp };
+    } catch (statusErr) {
+      console.error(`[NOTIF] Gagal fetch status via transaction_id=${rawNotif.transaction_id}:`, statusErr.message);
+      // Tetap lanjut pakai data webhook mentah sebagai fallback terakhir,
+      // supaya webhook tidak gagal total kalau status API sedang bermasalah.
+    }
+
     const { order_id, transaction_status, fraud_status, gross_amount } = notif;
 
-    console.log(`[NOTIF] ${order_id} | ${transaction_status} | fraud: ${fraud_status}`);
+    console.log(`[NOTIF] ${order_id} | ${transaction_status} | fraud: ${fraud_status} | payment_type: ${notif.payment_type}`);
 
     // ── 2. Tentukan status ───────────────────────────────────────
     const isSuccess = (
@@ -90,10 +108,7 @@ export default async function handler(req, res) {
 
       if (!uid) {
         // Tidak ada uid → tidak bisa update subscription
-        // Bisa terjadi kalau user buka subscribe.html tanpa dari app,
-        // atau (kasus yang pernah ketemu) channel pembayaran tertentu
-        // seperti DANA mengirim order_id berbeda di webhook dibanding
-        // order_id asli yang dibuat pay.js.
+        // Bisa terjadi kalau user buka subscribe.html tanpa dari app
         console.warn(`[NOTIF] Order ${order_id} tidak punya uid. Skip subscription update.`);
         await logFailedNotification('missing_uid', notif, order);
         return res.status(200).json({ status: 'OK' });
