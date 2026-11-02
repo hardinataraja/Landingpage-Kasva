@@ -8,6 +8,8 @@
   <link rel="icon" type="image/png" href="/preview.jpg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Google Identity Services -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <!-- Midtrans Snap -->
   <script src="https://app.midtrans.com/snap/snap.js" data-client-key="Mid-client-87y7WFRRFmI31YrK"></script>
 
@@ -332,6 +334,36 @@
       display: flex; align-items: center; gap: 5px;
       font-size: 11px; color: rgba(255,255,255,0.3);
     }
+
+    /* ── Auth ── */
+    .auth-tabs { display: flex; gap: 6px; margin-bottom: 16px; }
+    .auth-tab {
+      flex: 1; padding: 10px; text-align: center; font-size: 13px; font-weight: 600;
+      border-radius: 10px; cursor: pointer; color: rgba(255,255,255,0.5);
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    }
+    .auth-tab.active { color: #fff; background: rgba(212,160,23,0.2); border-color: #D4A017; }
+    .auth-msg { font-size: 12px; margin: 0 0 12px; line-height: 1.5; display: none; padding: 10px 12px; border-radius: 10px; }
+    .auth-msg.error { display: block; color: #fca5a5; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); }
+    .auth-msg.info  { display: block; color: #86efac; background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); }
+    .link-btn { background: none; border: none; color: rgba(255,255,255,0.55); font-size: 12px; cursor: pointer; text-decoration: underline; padding: 4px 0; font-family: inherit; }
+    .link-btn:hover { color: #fff; }
+    .small-btn {
+      width: 100%; padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.06); color: #fff; font-weight: 600; font-size: 13px; cursor: pointer; font-family: inherit;
+    }
+    .small-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .account-bar {
+      display: flex; justify-content: space-between; align-items: center; gap: 10px;
+      font-size: 12px; color: rgba(255,255,255,0.55); margin-bottom: 16px;
+      padding: 10px 14px; border-radius: 12px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    }
+    .account-bar strong { color: #fff; font-weight: 600; word-break: break-all; }
+    .form-group input[readonly] { opacity: 0.6; cursor: not-allowed; }
+    .divider { display: flex; align-items: center; gap: 10px; margin: 16px 0 12px; font-size: 11px; color: rgba(255,255,255,0.35); }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.1); }
+    #googleBtnWrap { display: none; justify-content: center; min-height: 44px; }
+    .note { font-size: 11px; color: rgba(255,255,255,0.4); line-height: 1.55; margin-top: 12px; }
   </style>
 </head>
 <body>
@@ -346,11 +378,69 @@
   </a>
 </nav>
 
+<!-- Halaman masuk / daftar -->
+<div class="container" id="authPage" style="display:none;">
+  <div class="page-header">
+    <h1>Masuk untuk Berlangganan</h1>
+    <p>Gunakan akun yang sama dengan yang Anda pakai di aplikasi Kasva POS</p>
+  </div>
+  <div class="form-section">
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="tabLogin" onclick="setAuthMode('login')">Masuk</div>
+      <div class="auth-tab" id="tabRegister" onclick="setAuthMode('register')">Daftar</div>
+    </div>
+    <div class="auth-msg" id="authMsg"></div>
+    <div class="form-group" id="grpAuthName" style="display:none;">
+      <label>Nama Lengkap</label>
+      <input type="text" id="authName" placeholder="Nama Anda" autocomplete="name">
+    </div>
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" id="authEmail" placeholder="email@contoh.com" autocomplete="email">
+    </div>
+    <div class="form-group" id="grpAuthPass">
+      <label>Password</label>
+      <input type="password" id="authPass" placeholder="Minimal 6 karakter" autocomplete="current-password">
+    </div>
+    <button class="cta-btn gold-btn" id="authBtn" onclick="handleAuth()" style="height:48px;margin-top:6px;">
+      <span id="authBtnLabel">Masuk</span>
+    </button>
+    <div style="text-align:center;margin-top:10px;">
+      <button class="link-btn" id="forgotBtn" onclick="handleForgot()">Lupa password?</button>
+    </div>
+    <div id="googleSection" style="display:none;">
+      <div class="divider">atau</div>
+      <div id="googleBtnWrap"><div id="googleBtn"></div></div>
+      <p class="note" style="text-align:center;margin-top:8px;">Pakai akun Google yang sama dengan di aplikasi Kasva. Jika tombol tidak muncul, buka halaman ini di Chrome/Safari (bukan browser dalam aplikasi lain).</p>
+    </div>
+    <p class="note">Akun dibuat di sini dapat dipakai untuk login di aplikasi Kasva POS (Android). Email perlu diverifikasi sebelum pembayaran.</p>
+  </div>
+</div>
+
+<!-- Halaman verifikasi email -->
+<div class="container" id="verifyPage" style="display:none;">
+  <div class="page-header">
+    <h1>Verifikasi Email</h1>
+    <p id="verifyDesc">Kami mengirim tautan verifikasi ke email Anda.</p>
+  </div>
+  <div class="form-section">
+    <div class="auth-msg" id="verifyMsg"></div>
+    <button class="cta-btn gold-btn" onclick="handleVerifiedCheck()" style="height:48px;"><span>Saya sudah verifikasi</span></button>
+    <div style="height:10px"></div>
+    <button class="small-btn" id="resendBtn" onclick="handleResend()">Kirim ulang email verifikasi</button>
+    <div style="text-align:center;margin-top:10px;"><button class="link-btn" onclick="handleLogout()">Keluar</button></div>
+  </div>
+</div>
+
 <!-- Halaman checkout -->
-<div class="container" id="checkoutPage">
+<div class="container" id="checkoutPage" style="display:none;">
+  <div class="account-bar">
+    <span>Masuk sebagai <strong id="accountEmail">-</strong></span>
+    <button class="link-btn" onclick="handleLogout()">Keluar</button>
+  </div>
   <div class="page-header">
     <h1>Pilih Paket</h1>
-    <p>Fitur aktif otomatis setelah pembayaran</p>
+    <p>Langganan aktif otomatis di akun ini setelah pembayaran terkonfirmasi</p>
   </div>
 
   <!-- Plan cards -->
@@ -418,7 +508,7 @@
     </div>
     <div class="form-group">
       <label>Email</label>
-      <input type="email" id="inputEmail" placeholder="email@contoh.com" autocomplete="email">
+      <input type="email" id="inputEmail" placeholder="email@contoh.com" autocomplete="email" readonly>
     </div>
     <div class="form-group">
       <label>No. HP / WhatsApp</label>
@@ -439,7 +529,7 @@
 
   <div class="trust-bar">
     <div class="trust-item">🔒 Midtrans Secured</div>
-    <div class="trust-item">⚡ Aktif Otomatis</div>
+    <div class="trust-item">⚡ Aktif Setelah Terkonfirmasi</div>
     <div class="trust-item">💬 Support WA</div>
   </div>
 </div>
@@ -465,156 +555,322 @@
 </div>
 
 <script>
-// ── State ────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+//  Kasva POS — halaman langganan (website)
+//  • Login/daftar memakai Firebase Auth (REST Identity Toolkit).
+//  • uid TIDAK lagi diambil dari URL; server membaca uid dari ID token.
+//  • Status pembayaran dibaca dari server (/api/check-payment), bukan
+//    dari parameter URL.
+// ═══════════════════════════════════════════════════════════════
+const IDT = 'https://identitytoolkit.googleapis.com/v1/';
+const STS = 'https://securetoken.googleapis.com/v1/token';
+let apiKey = null;
+let googleClientId = null;
+let session = null;          // { idToken, refreshToken, expiresAt, uid, email, emailVerified }
+let authMode = 'login';
 let selectedCard = document.querySelector('.plan-card.selected');
-let uid = null;
 
-// ── Init: ambil uid & plan dari URL params ───────────────────────
-window.addEventListener('load', () => {
-  const params = new URLSearchParams(window.location.search);
-  uid = params.get('uid') || null;
+const $ = (id) => document.getElementById(id);
+function show(id, on) { $(id).style.display = on ? 'block' : 'none'; }
+function setMsg(id, type, text) {
+  const el = $(id);
+  el.className = 'auth-msg' + (type ? ' ' + type : '');
+  el.textContent = text || '';
+}
 
-  // Pre-select plan dari param
-  const planParam    = params.get('plan');
-  const billingParam = params.get('billing');
-  if (planParam) {
-    const target = document.querySelector(
-      `.plan-card[data-plan="${planParam}"][data-billing="${billingParam || 'monthly'}"]`
-    );
-    if (target) selectPlan(target);
+// ── Firebase REST helpers ────────────────────────────────────────
+function mapError(code) {
+  const c = String(code || '');
+  if (/EMAIL_EXISTS/.test(c))                      return 'Email sudah terdaftar. Silakan masuk.';
+  if (/EMAIL_NOT_FOUND|INVALID_PASSWORD|INVALID_LOGIN_CREDENTIALS/.test(c)) return 'Email atau password salah.';
+  if (/WEAK_PASSWORD/.test(c))                     return 'Password minimal 6 karakter.';
+  if (/INVALID_EMAIL/.test(c))                     return 'Format email tidak valid.';
+  if (/FEDERATED_USER_ID_ALREADY_LINKED|NEED_CONFIRMATION/.test(c)) return 'Email ini sudah terdaftar dengan password. Masuk dengan email & password.';
+  if (/TOO_MANY_ATTEMPTS/.test(c))                 return 'Terlalu banyak percobaan. Coba lagi beberapa menit lagi.';
+  if (/USER_DISABLED/.test(c))                     return 'Akun ini dinonaktifkan. Hubungi support.';
+  return 'Terjadi kesalahan. Periksa koneksi internet lalu coba lagi.';
+}
+async function idt(method, body) {
+  const r = await fetch(IDT + method + '?key=' + encodeURIComponent(apiKey), {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+  });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(mapError(j.error && j.error.message));
+  return j;
+}
+async function refreshSession(refreshToken) {
+  const r = await fetch(STS + '?key=' + encodeURIComponent(apiKey), {
+    method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: 'grant_type=refresh_token&refresh_token=' + encodeURIComponent(refreshToken),
+  });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error('session');
+  return { idToken: j.id_token, refreshToken: j.refresh_token, expiresAt: Date.now() + (parseInt(j.expires_in, 10) || 3600) * 1000 };
+}
+async function loadAccount(tokens) {
+  const info = await idt('accounts:lookup', { idToken: tokens.idToken });
+  const u = (info.users || [])[0] || {};
+  session = { ...tokens, uid: u.localId, email: u.email || '', emailVerified: !!u.emailVerified };
+  try { sessionStorage.setItem('kasva_rt', tokens.refreshToken); } catch (_) {}
+}
+async function getIdToken() {
+  if (!session) throw new Error('Silakan masuk terlebih dahulu.');
+  if (session.expiresAt - 60000 < Date.now()) {
+    const t = await refreshSession(session.refreshToken);
+    session = { ...session, ...t };
+    try { sessionStorage.setItem('kasva_rt', t.refreshToken); } catch (_) {}
   }
+  return session.idToken;
+}
 
-  // Cek redirect dari Midtrans
-  const status  = params.get('transaction_status') || params.get('status');
-  const orderId = params.get('order_id');
-  if (status && orderId) {
-    handleRedirectStatus(status, orderId);
+// ── Navigasi tampilan ────────────────────────────────────────────
+function render() {
+  show('authPage', false); show('verifyPage', false); show('checkoutPage', false); show('statusPage', false);
+  if (!session) { show('authPage', true); return; }
+  if (!session.emailVerified) {
+    $('verifyDesc').textContent = 'Kami mengirim tautan verifikasi ke ' + session.email + '. Buka email Anda, klik tautannya, lalu tekan tombol di bawah.';
+    show('verifyPage', true); return;
   }
-});
+  $('accountEmail').textContent = session.email;
+  $('inputEmail').value = session.email;
+  show('checkoutPage', true);
+}
+
+// ── Auth actions ─────────────────────────────────────────────────
+function setAuthMode(mode) {
+  authMode = mode;
+  $('tabLogin').classList.toggle('active', mode === 'login');
+  $('tabRegister').classList.toggle('active', mode === 'register');
+  $('grpAuthName').style.display = mode === 'register' ? 'block' : 'none';
+  $('authBtnLabel').textContent  = mode === 'register' ? 'Daftar' : 'Masuk';
+  $('authPass').autocomplete     = mode === 'register' ? 'new-password' : 'current-password';
+  $('forgotBtn').style.display   = mode === 'login' ? 'inline' : 'none';
+  setMsg('authMsg', '', '');
+}
+async function handleAuth() {
+  if (!apiKey) return setMsg('authMsg', 'error', 'Layanan masuk belum dikonfigurasi. Hubungi admin.');
+  const email = $('authEmail').value.trim();
+  const pass  = $('authPass').value;
+  const name  = $('authName').value.trim();
+  if (!email || !email.includes('@')) return setMsg('authMsg', 'error', 'Email tidak valid.');
+  if (!pass) return setMsg('authMsg', 'error', 'Password wajib diisi.');
+  if (authMode === 'register' && !name) return setMsg('authMsg', 'error', 'Nama lengkap wajib diisi.');
+  const btn = $('authBtn'); btn.disabled = true; setMsg('authMsg', '', '');
+  try {
+    if (authMode === 'register') {
+      const r = await idt('accounts:signUp', { email, password: pass, returnSecureToken: true });
+      const tokens = { idToken: r.idToken, refreshToken: r.refreshToken, expiresAt: Date.now() + (parseInt(r.expiresIn, 10) || 3600) * 1000 };
+      await loadAccount(tokens);
+      await idt('accounts:sendOobCode', { requestType: 'VERIFY_EMAIL', idToken: tokens.idToken });
+      // Siapkan profil toko agar login pertama di aplikasi berjalan normal
+      fetch('/api/profile', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + tokens.idToken }, body: JSON.stringify({ name }) }).catch(() => {});
+      $('inputName').value = name;
+    } else {
+      const r = await idt('accounts:signInWithPassword', { email, password: pass, returnSecureToken: true });
+      await loadAccount({ idToken: r.idToken, refreshToken: r.refreshToken, expiresAt: Date.now() + (parseInt(r.expiresIn, 10) || 3600) * 1000 });
+    }
+    $('authPass').value = '';
+    render();
+  } catch (e) {
+    setMsg('authMsg', 'error', e.message);
+  } finally { btn.disabled = false; }
+}
+async function handleForgot() {
+  if (!apiKey) return setMsg('authMsg', 'error', 'Layanan masuk belum dikonfigurasi. Hubungi admin.');
+  const email = $('authEmail').value.trim();
+  if (!email || !email.includes('@')) return setMsg('authMsg', 'error', 'Isi email Anda dulu, lalu tekan "Lupa password?".');
+  try {
+    await idt('accounts:sendOobCode', { requestType: 'PASSWORD_RESET', email });
+    setMsg('authMsg', 'info', 'Jika email terdaftar, tautan reset password sudah dikirim. Periksa kotak masuk dan folder spam.');
+  } catch (e) { setMsg('authMsg', 'error', e.message); }
+}
+async function handleResend() {
+  const btn = $('resendBtn'); btn.disabled = true;
+  try {
+    await idt('accounts:sendOobCode', { requestType: 'VERIFY_EMAIL', idToken: await getIdToken() });
+    setMsg('verifyMsg', 'info', 'Email verifikasi dikirim ulang. Periksa juga folder spam.');
+  } catch (e) { setMsg('verifyMsg', 'error', e.message); }
+  setTimeout(() => { btn.disabled = false; }, 30000);
+}
+async function handleVerifiedCheck() {
+  try {
+    // refresh agar ID token memuat klaim email_verified terbaru
+    const t = await refreshSession(session.refreshToken);
+    await loadAccount(t);
+    if (!session.emailVerified) return setMsg('verifyMsg', 'error', 'Email belum terverifikasi. Klik tautan di email Anda dulu.');
+    render();
+  } catch (e) { setMsg('verifyMsg', 'error', 'Gagal memeriksa. Coba lagi.'); }
+}
+// ── Google Sign-In (Google Identity Services → Firebase signInWithIdp) ──
+async function handleGoogleCredential(resp) {
+  if (!apiKey) return setMsg('authMsg', 'error', 'Layanan masuk belum dikonfigurasi. Hubungi admin.');
+  setMsg('authMsg', '', '');
+  try {
+    const r = await idt('accounts:signInWithIdp', {
+      postBody: 'id_token=' + encodeURIComponent(resp.credential) + '&providerId=google.com',
+      requestUri: window.location.origin,
+      returnIdpCredential: true,
+      returnSecureToken: true,
+    });
+    if (!r.idToken) {
+      // needConfirmation: email sudah dipakai akun email+password yang belum tertaut Google
+      throw new Error(mapError('NEED_CONFIRMATION'));
+    }
+    const tokens = { idToken: r.idToken, refreshToken: r.refreshToken, expiresAt: Date.now() + (parseInt(r.expiresIn, 10) || 3600) * 1000 };
+    await loadAccount(tokens);
+    // Pengguna baru dari web: siapkan profil toko (idempoten; tidak menimpa data dari aplikasi)
+    fetch('/api/profile', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + tokens.idToken }, body: JSON.stringify({ name: r.displayName || '' }) }).catch(() => {});
+    if (r.displayName && !$('inputName').value) $('inputName').value = r.displayName;
+    render();
+  } catch (e) {
+    setMsg('authMsg', 'error', e.message);
+  }
+}
+function initGoogleButton(clientId) {
+  if (!clientId) return;
+  let tries = 0;
+  const timer = setInterval(() => {
+    if (window.google && google.accounts && google.accounts.id) {
+      clearInterval(timer);
+      google.accounts.id.initialize({ client_id: clientId, callback: handleGoogleCredential });
+      google.accounts.id.renderButton($('googleBtn'), { theme: 'filled_black', size: 'large', text: 'continue_with', shape: 'pill', width: 300, locale: 'id' });
+      $('googleSection').style.display = 'block';
+      $('googleBtnWrap').style.display = 'flex';
+    } else if (++tries > 50) { clearInterval(timer); }  // ±10 detik, lalu menyerah (tombol email tetap ada)
+  }, 200);
+}
+
+function handleLogout() {
+  session = null;
+  try { sessionStorage.removeItem('kasva_rt'); } catch (_) {}
+  try { if (window.google && google.accounts) google.accounts.id.disableAutoSelect(); } catch (_) {}
+  render();
+}
 
 // ── Pilih plan ───────────────────────────────────────────────────
 function selectPlan(card) {
-  // Hapus selected dari semua
   document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
   card.classList.add('selected');
   selectedCard = card;
-
-  const price   = parseInt(card.dataset.price);
-  const plan    = card.dataset.plan;
-  const billing = card.dataset.billing;
-
-  // Update summary
+  const price = parseInt(card.dataset.price, 10);
   const formatted = 'Rp ' + price.toLocaleString('id-ID');
-  document.getElementById('summaryPrice').textContent = formatted;
-  document.getElementById('ctaLabel').textContent = `Bayar Sekarang — ${formatted}`;
-
-  // Update warna summary price
-  const sp = document.getElementById('summaryPrice');
-  sp.className = 'summary-price';
-  if (card.classList.contains('silver'))    sp.classList.add('silver');
-  if (card.classList.contains('gold'))      sp.classList.add('gold');
-  if (card.classList.contains('deep-gold')) sp.classList.add('deep-gold');
-
-  // Update warna tombol
-  const btn = document.getElementById('ctaBtn');
-  btn.className = 'cta-btn';
-  if (card.classList.contains('silver'))    btn.classList.add('silver-btn');
-  if (card.classList.contains('gold'))      btn.classList.add('gold-btn');
-  if (card.classList.contains('deep-gold')) btn.classList.add('deep-gold-btn');
+  $('summaryPrice').textContent = formatted;
+  $('ctaLabel').textContent = 'Bayar Sekarang — ' + formatted;
+  const sp = $('summaryPrice'); sp.className = 'summary-price';
+  const btn = $('ctaBtn'); btn.className = 'cta-btn';
+  ['silver', 'gold', 'deep-gold'].forEach(k => {
+    if (card.classList.contains(k)) { sp.classList.add(k); btn.classList.add(k + '-btn'); }
+  });
 }
 
-// ── Validasi form ────────────────────────────────────────────────
+// ── Validasi & checkout ──────────────────────────────────────────
 function validateForm() {
-  const name  = document.getElementById('inputName').value.trim();
-  const email = document.getElementById('inputEmail').value.trim();
-  const phone = document.getElementById('inputPhone').value.trim();
-
-  if (!name)  { alert('Nama lengkap wajib diisi.'); return false; }
-  if (!email || !email.includes('@')) { alert('Email tidak valid.'); return false; }
-  if (!phone) { alert('No. HP wajib diisi.'); return false; }
+  if (!$('inputName').value.trim())  { alert('Nama lengkap wajib diisi.'); return false; }
+  if (!$('inputPhone').value.trim()) { alert('No. HP wajib diisi.'); return false; }
   if (!selectedCard) { alert('Pilih paket terlebih dahulu.'); return false; }
   return true;
 }
-
-// ── Checkout ─────────────────────────────────────────────────────
 async function handleCheckout() {
   if (!validateForm()) return;
-
-  const btn = document.getElementById('ctaBtn');
+  const btn = $('ctaBtn');
   btn.disabled = true;
-  document.getElementById('loadingOverlay').classList.add('active');
-
+  $('loadingOverlay').classList.add('active');
   try {
+    const token = await getIdToken();
     const res = await fetch('/api/pay', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
       body: JSON.stringify({
-        uid:     uid,
         plan:    selectedCard.dataset.plan,
         billing: selectedCard.dataset.billing,
-        price:   parseInt(selectedCard.dataset.price),
-        name:    document.getElementById('inputName').value.trim(),
-        email:   document.getElementById('inputEmail').value.trim(),
-        phone:   document.getElementById('inputPhone').value.trim(),
+        price:   parseInt(selectedCard.dataset.price, 10),
+        name:    $('inputName').value.trim(),
+        phone:   $('inputPhone').value.trim(),
       }),
     });
-
-    const data = await res.json();
-    document.getElementById('loadingOverlay').classList.remove('active');
-
+    const data = await res.json().catch(() => ({}));
+    $('loadingOverlay').classList.remove('active');
     if (!data.token) throw new Error(data.error || 'Gagal mendapatkan token pembayaran.');
-
-    // Buka Midtrans Snap
     window.snap.pay(data.token, {
-      onSuccess: (result) => showStatus('success', result.order_id),
-      onPending: (result) => showStatus('pending', result.order_id),
-      onError:   (result) => showStatus('error',   result.order_id),
-      onClose:   ()       => { btn.disabled = false; },
+      onSuccess: (r) => verifyOrder(r.order_id),
+      onPending: (r) => verifyOrder(r.order_id),
+      onError:   (r) => showStatus('error', r.order_id),
+      onClose:   ()  => { btn.disabled = false; },
     });
-
   } catch (err) {
-    document.getElementById('loadingOverlay').classList.remove('active');
+    $('loadingOverlay').classList.remove('active');
     btn.disabled = false;
     alert('Terjadi kesalahan: ' + err.message);
   }
 }
 
-// ── Tampilkan status ─────────────────────────────────────────────
+// ── Status: SELALU dari server ───────────────────────────────────
 function showStatus(status, orderId) {
-  document.getElementById('checkoutPage').style.display = 'none';
-  document.getElementById('statusPage').style.display   = 'block';
-
-  const icon  = document.getElementById('statusIcon');
-  const title = document.getElementById('statusTitle');
-  const desc  = document.getElementById('statusDesc');
-  const order = document.getElementById('statusOrder');
-
-  if (orderId) {
-    order.textContent = 'Order ID: ' + orderId;
-    order.style.display = 'inline-block';
-  }
-
+  show('authPage', false); show('verifyPage', false); show('checkoutPage', false); show('statusPage', true);
+  const icon = $('statusIcon'), title = $('statusTitle'), desc = $('statusDesc'), order = $('statusOrder');
+  if (orderId) { order.textContent = 'Order ID: ' + orderId; order.style.display = 'inline-block'; }
   if (status === 'success') {
-    icon.textContent  = '🎉';
-    title.textContent = 'Pembayaran Berhasil!';
-    desc.textContent  = 'Langganan kamu sudah aktif. Buka app Kasva dan fitur akan langsung terbuka secara otomatis.';
+    icon.textContent = '🎉'; title.textContent = 'Pembayaran Berhasil!';
+    desc.textContent = 'Langganan Pro sudah aktif di akun Anda. Login di aplikasi Kasva dengan akun yang sama, lalu buka Pengaturan → Langganan Saya untuk melihat masa aktif.';
   } else if (status === 'pending') {
-    icon.textContent  = '⏳';
-    title.textContent = 'Menunggu Pembayaran';
-    desc.textContent  = 'Pembayaran sedang diproses. Fitur akan aktif otomatis setelah pembayaran terkonfirmasi.\nBiasanya dalam beberapa menit.';
+    icon.textContent = '⏳'; title.textContent = 'Menunggu Konfirmasi';
+    desc.textContent = 'Pembayaran belum terkonfirmasi. Langganan akan aktif setelah pembayaran diterima (biasanya beberapa menit). Anda boleh menutup halaman ini.';
+  } else if (status === 'checking') {
+    icon.textContent = '🔄'; title.textContent = 'Memverifikasi Pembayaran...';
+    desc.textContent = 'Mohon tunggu sebentar.';
   } else {
-    icon.textContent  = '❌';
-    title.textContent = 'Pembayaran Gagal';
-    desc.textContent  = 'Pembayaran tidak berhasil atau dibatalkan. Silakan coba lagi.';
+    icon.textContent = '❌'; title.textContent = 'Pembayaran Gagal';
+    desc.textContent = 'Pembayaran tidak berhasil atau dibatalkan. Silakan coba lagi.';
   }
 }
-
-// ── Handle redirect dari Midtrans ────────────────────────────────
-function handleRedirectStatus(status, orderId) {
-  window.history.replaceState({}, document.title, window.location.pathname);
-  const map = { settlement: 'success', capture: 'success', pending: 'pending' };
-  showStatus(map[status] || 'error', orderId);
+async function verifyOrder(orderId) {
+  showStatus('checking', orderId);
+  for (let i = 0; i < 10; i++) {
+    try {
+      const r = await fetch('/api/check-payment?order_id=' + encodeURIComponent(orderId));
+      const d = await r.json();
+      if (d.status === 'success' && d.applied) return showStatus('success', orderId);
+      if (d.status === 'failed') return showStatus('error', orderId);
+    } catch (_) {}
+    await new Promise(r => setTimeout(r, 3000));
+  }
+  showStatus('pending', orderId);
 }
+
+// ── Init ─────────────────────────────────────────────────────────
+window.addEventListener('load', async () => {
+  const params = new URLSearchParams(window.location.search);
+  const orderId = params.get('order_id');
+
+  // Pre-select paket dari ?plan=&billing= (opsional)
+  const planParam = params.get('plan'), billingParam = params.get('billing');
+  if (planParam) {
+    const t = document.querySelector('.plan-card[data-plan="' + planParam + '"][data-billing="' + (billingParam || 'monthly') + '"]');
+    if (t) selectPlan(t);
+  }
+
+  // Redirect dari Midtrans: tampilkan status dari server (bukan dari URL)
+  if (orderId) {
+    window.history.replaceState({}, document.title, window.location.pathname);
+    verifyOrder(orderId);
+    return;
+  }
+
+  try {
+    const cfg = await (await fetch('/api/config')).json();
+    apiKey = cfg.firebaseApiKey || null;
+    googleClientId = cfg.googleClientId || null;
+  } catch (_) { apiKey = null; }
+
+  setAuthMode('login');
+  if (apiKey) initGoogleButton(googleClientId);
+  // Pulihkan sesi (tab yang sama)
+  try {
+    const rt = sessionStorage.getItem('kasva_rt');
+    if (rt && apiKey) { await loadAccount(await refreshSession(rt)); }
+  } catch (_) { session = null; try { sessionStorage.removeItem('kasva_rt'); } catch (__) {} }
+  render();
+});
 </script>
 
 </body>
